@@ -1,118 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Website Title</title>
+  <!-- Add the required scripts -->
+  <script src="three.r134.min.js"></script>
+  <script src="vanta.dots.min.js"></script>
   <style>
-    body,
-    html {
-      height: 100%;
+    body {
       margin: 0;
       overflow: hidden;
     }
-
-    #vanta-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1; /* Set a lower z-index for the background */
-    }
-
-    #panel-container {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr); /* Adjusted for 4 panels */
-      grid-template-rows: repeat(2, 9fr); /* 4 times bigger */
-      grid-gap: 30px; /* Increased padding in between */
-      justify-content: center;
+    #your-element-selector {
+      height: 100vh; /* Set the height to fill the viewport */
+      display: flex;
       align-items: center;
-      height: 80vh; /* Adjusted height */
-      padding: 10% 5% 0 5%; /* Added more padding on the sides */
-    }
-
-    .panel {
-      background-color: rgb(52, 53, 65); /* Panel background color */
-      padding: 120px; /* 4 times bigger padding */
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-      text-align: center;
-      transform: scale(1);
-      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-      overflow: hidden;
-      color: white; /* Text color */
-      font-family: 'Poppins', sans-serif; /* Poppins font */
-      height: 40vh;
-      width: 30vh;
-    }
-
-    .panel:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-    }
-
-    .panel h2 {
-      font-size: 36px; /* Increased font size */
-      margin-bottom: 20px; /* Increased margin */
-    }
-
-    .panel p {
-      font-size: 24px; /* Increased font size */
-      color: #ccc;
+      justify-content: center;
+      color: white;
+      font-family: Arial, sans-serif;
     }
   </style>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.22/dist/vanta.net.min.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // Disable zoom on PC
-      document.addEventListener('wheel', function (e) {
-        if (e.ctrlKey) {
-          e.preventDefault();
-        }
-      });
-
-      VANTA.NET({
-        el: "#vanta-container",
-        mouseControls: true,
-        touchControls: true,
-        gyroControls: false,
-        minHeight: 200.0,
-        minWidth: 200.0,
-        scale: 1.0,
-        scaleMobile: 1.0,
-      });
-    });
-  </script>
 </head>
-
 <body>
-  <div id="vanta-container"></div>
-  
-  <div id="panel-container">
-    <div class="panel">
-      <!-- Content for the panel -->
-      <h2>Panel Title 1</h2>
-      <p>Panel content goes here.</p>
-    </div>
-    <div class="panel">
-      <!-- Content for the panel -->
-      <h2>Panel Title 2</h2>
-      <p>Panel content goes here.</p>
-    </div>
-    <div class="panel">
-      <!-- Content for the panel -->
-      <h2>Panel Title 3</h2>
-      <p>Panel content goes here.</p>
-    </div>
-    <div class="panel">
-      <!-- Content for the panel -->
-      <h2>Panel Title 4</h2>
-      <p>Panel content goes here.</p>
-    </div>
-  </div>
-</body>
 
+<!-- Your HTML content goes here -->
+
+<!-- Add an element with the specified selector for the VANTA.DOTS background -->
+<div id="your-element-selector">
+  <!-- Your content inside this element will be affected by the background -->
+  <h1>Welcome to Your Website</h1>
+  <p>This is a placeholder text. Replace it with your actual content.</p>
+  <!-- Add more content as needed -->
+</div>
+
+<!-- Initialize VANTA.DOTS with the specified configuration -->
+<script>
+  VANTA.DOTS({
+    el: "#your-element-selector",
+    mouseControls: true,
+    touchControls: true,
+    gyroControls: false,
+    minHeight: 200.00,
+    minWidth: 200.00,
+    scale: 1.00,
+    scaleMobile: 1.00,
+    color: 0x313338,
+    color2: 0x0,
+    backgroundColor: 0x1e1f22,
+    showLines: false
+  });
+</script>
+
+</body>
 </html>
