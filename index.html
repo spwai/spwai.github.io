@@ -8,14 +8,16 @@
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <!-- Include Stats.js library -->
   <script src="https://threejs.org/examples/js/libs/stats.min.js"></script>
-  <!-- Include Poppins font from Google Fonts -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
   <!-- Include your custom styles -->
   <style>
     /* ---- reset ---- */
     body {
       margin: 0;
       font: normal 75% Arial, Helvetica, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
     canvas {
       display: block;
@@ -31,6 +33,7 @@
       background-repeat: no-repeat;
       background-size: 20%;
       background-position: 50% 50%;
+      z-index: 1;
     }
     /* ---- stats.js ---- */
     #stats {
@@ -40,55 +43,130 @@
       top: 0;
       left: 0;
     }
-    /* ---- Custom Title Styles ---- */
-    .title-container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      font-family: 'Poppins', sans-serif; /* Use the Poppins font */
+    /* ---- Custom text style ---- */
+    #custom-text {
+      font-family: 'JetBrains Mono', monospace;
       font-size: 3em;
-      color: #ffffff; /* White text color */
-      cursor: pointer;
-      transition: color 0.3s ease-in-out;
-    }
-    .title-container:hover {
-      color: #13E8E9; /* Change to your desired hover color */
-    }
-    .loading-animation {
-      display: inline-block;
-      margin-left: 10px; /* Adjust the spacing as needed */
-    }
-    .loading-animation div {
-      width: 8px;
-      height: 8px;
-      background-color: #ffffff;
-      border-radius: 50%;
-      display: inline-block;
-      animation: loadingAnimation 0.8s infinite alternate;
-    }
-    @keyframes loadingAnimation {
-      to {
-        transform: translateY(-15px);
-        background-color: #13E8E9; /* Change to your desired loading color */
-      }
+      font-weight: bold;
+      color: #ffffff;
+      z-index: 2;
     }
   </style>
+  <!-- Include Jetbrains Mono font -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap">
 </head>
 <body>
 
   <!-- particles.js container -->
   <div id="particles-js"></div>
 
+  <!-- Custom text -->
+  <div id="custom-text">Spwai</div>
+
   <!-- Include Particles.js configuration script -->
   <script>
     particlesJS('particles-js', {
       "particles": {
-        // ... (Your existing particles configuration)
+        "number": {
+          "value": 160,
+          "density": {
+            "enable": true,
+            "value_area": 800
+          }
+        },
+        "color": {
+          "value": "#ffffff"
+        },
+        "shape": {
+          "type": "circle",
+          "stroke": {
+            "width": 0,
+            "color": "#000000"
+          },
+          "polygon": {
+            "nb_sides": 5
+          }
+        },
+        "opacity": {
+          "value": 1,
+          "random": true,
+          "anim": {
+            "enable": true,
+            "speed": 1,
+            "opacity_min": 0,
+            "sync": false
+          }
+        },
+        "size": {
+          "value": 3,
+          "random": true,
+          "anim": {
+            "enable": false,
+            "speed": 4,
+            "size_min": 0.3,
+            "sync": false
+          }
+        },
+        "line_linked": {
+          "enable": false,
+          "distance": 150,
+          "color": "#ffffff",
+          "opacity": 0.4,
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 1,
+          "direction": "none",
+          "random": true,
+          "straight": false,
+          "out_mode": "out",
+          "bounce": false,
+          "attract": {
+            "enable": false,
+            "rotateX": 600,
+            "rotateY": 600
+          }
+        }
       },
       "interactivity": {
-        // ... (Your existing interactivity configuration)
+        "detect_on": "canvas",
+        "events": {
+          "onhover": {
+            "enable": false,
+            "mode": "repulse"
+          },
+          "onclick": {
+            "enable": false,
+            "mode": "repulse"
+          },
+          "resize": true
+        },
+        "modes": {
+          "grab": {
+            "distance": 400,
+            "line_linked": {
+              "opacity": 1
+            }
+          },
+          "bubble": {
+            "distance": 250,
+            "size": 0,
+            "duration": 2,
+            "opacity": 0,
+            "speed": 3
+          },
+          "repulse": {
+            "distance": 400,
+            "duration": 0.4
+          },
+          "push": {
+            "particles_nb": 4
+          },
+          "remove": {
+            "particles_nb": 2
+          }
+        }
       },
       "retina_detect": true
     });
@@ -108,16 +186,6 @@
 
     requestAnimationFrame(update);
   </script>
-
-  <!-- Your custom title and loading animation -->
-  <div class="title-container">
-    spwai
-    <div class="loading-animation">
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
-  </div>
 
   <!-- Your other HTML content goes here -->
 
