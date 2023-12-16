@@ -13,7 +13,7 @@
     /* ---- reset ---- */
     body {
       margin: 0;
-      padding: 0; /* Add this line */
+      padding: 0;
       font: normal 75% Arial, Helvetica, sans-serif;
       display: flex;
       align-items: center;
@@ -27,16 +27,13 @@
     }
     /* ---- particles.js container ---- */
     #particles-js {
-      position: absolute;
+      position: fixed;
       width: 100%;
       height: 100%;
-      background-color: #232741; /* Fallback background color */
-      background-image: url("");
-      background-repeat: no-repeat;
-      background-size: 20%;
-      background-position: 50% 50%;
+      top: 0;
+      left: 0;
       z-index: 1;
-      touch-action: none; /* Add this line */
+      touch-action: none;
     }
     /* ---- Custom text style ---- */
     #custom-text {
