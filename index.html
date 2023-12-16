@@ -9,6 +9,7 @@
       height: 100%;
       margin: 0;
       overflow: hidden;
+      background-color: #333; /* Dark background color */
     }
 
     #vanta-container {
@@ -26,10 +27,11 @@
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 20px;
       padding: 20px;
+      margin-top: 50px; /* Adjust margin as needed */
     }
 
     .panel {
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: #ddd; /* Light gray panel background color */
       padding: 20px;
       border-radius: 15px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -58,4 +60,6 @@
         touchControls: true,
         gyroControls: false,
         minHeight: 200.0,
-        min
+        minWidth: 200.0,
+        scale: 1.0,
+        scaleMobile: 1.0,
