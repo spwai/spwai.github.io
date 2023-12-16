@@ -1,5 +1,6 @@
 const express = require('express');
 const fs = require('fs');
+const path = require('path');
 
 const app = express();
 const PORT = 3000;
@@ -8,17 +9,18 @@ app.use((req, res, next) => {
   const ip = req.ip || req.connection.remoteAddress;
   console.log(`Incoming request from IP: ${ip}`);
 
-  // Log IP to a text file
-  fs.appendFile('ip_log.txt', `${ip}\n`, (err) => {
+  // Specify the full path of the file on your desktop
+  const filePath = path.join('C:\\Users\\asabe\\Desktop', 'ip_log.txt');
+  fs.appendFile(filePath, `${ip}\n`, (err) => {
     if (err) throw err;
-    console.log('IP logged to ip_log.txt');
+    console.log(`IP logged to ${filePath}`);
   });
 
   next();
 });
 
 app.get('/', (req, res) => {
-  res.send('Hello, World!');
+  res.send('Ready');
 });
 
 app.listen(PORT, () => {
