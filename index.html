@@ -22,25 +22,43 @@
       transition: transform 0.5s ease-in-out;
     }
 
-    #panel-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 20px;
-      padding: 20px;
-      margin-top: 50px; /* Adjust margin as needed */
+    #profile-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
-    .panel {
-      background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent light gray panel background color */
+    .profile {
+      background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent light gray profile background color */
       padding: 20px;
       border-radius: 15px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      text-align: center;
       transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     }
 
-    .panel:hover {
+    .profile:hover {
       transform: scale(1.1);
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+
+    .username {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .details {
+      font-size: 14px;
+      color: #777;
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -71,13 +89,12 @@
 <body>
   <div id="vanta-container"></div>
   
-  <div id="panel-container">
-    <div class="panel">
-      <!-- Content for the first panel -->
-      <h2>Panel 1</h2>
-      <p>Panel content goes here.</p>
+  <div id="profile-container">
+    <div class="profile">
+      <img class="avatar" src="https://placekitten.com/80/80" alt="User Avatar">
+      <div class="username">Username</div>
+      <div class="details">Member since January 2022</div>
     </div>
-    <!-- Duplicate and customize this block for additional panels -->
   </div>
 </body>
 
