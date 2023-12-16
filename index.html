@@ -35,14 +35,6 @@
       background-position: 50% 50%;
       z-index: 1;
     }
-    /* ---- stats.js ---- */
-    #stats {
-      border-radius: 3px 3px 0 0;
-      overflow: hidden;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
     /* ---- Custom text style ---- */
     #custom-text {
       font-family: 'JetBrains Mono', monospace;
@@ -50,6 +42,12 @@
       font-weight: bold;
       color: #ffffff;
       z-index: 2;
+      transition: transform 0.3s ease-in-out, letter-spacing 0.3s ease-in-out;
+    }
+    /* Hover effects */
+    #custom-text:hover {
+      transform: scale(1.2); /* Scale up on hover */
+      letter-spacing: 4px; /* Increase letter spacing on hover */
     }
   </style>
   <!-- Include Jetbrains Mono font -->
