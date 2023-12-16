@@ -21,5 +21,8 @@ jobs:
     - name: Install dependencies
       run: npm install
 
+    - name: Change to project directory
+      run: cd $GITHUB_WORKSPACE
+
     - name: Run Node.js server
       run: npm start
