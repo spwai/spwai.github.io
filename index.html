@@ -21,10 +21,13 @@
     }
 
     #panel-container {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 20px;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      padding: 20px;
     }
 
     .panel {
@@ -84,7 +87,32 @@
   <div id="panel-container">
     <div class="panel">
       <!-- Content for the panel -->
-      <h2>Panel Title</h2>
+      <h2>Panel Title 1</h2>
+      <p>Panel content goes here.</p>
+    </div>
+    <div class="panel">
+      <!-- Content for the panel -->
+      <h2>Panel Title 2</h2>
+      <p>Panel content goes here.</p>
+    </div>
+    <div class="panel">
+      <!-- Content for the panel -->
+      <h2>Panel Title 3</h2>
+      <p>Panel content goes here.</p>
+    </div>
+    <div class="panel">
+      <!-- Content for the panel -->
+      <h2>Panel Title 4</h2>
+      <p>Panel content goes here.</p>
+    </div>
+    <div class="panel">
+      <!-- Content for the panel -->
+      <h2>Panel Title 5</h2>
+      <p>Panel content goes here.</p>
+    </div>
+    <div class="panel">
+      <!-- Content for the panel -->
+      <h2>Panel Title 6</h2>
       <p>Panel content goes here.</p>
     </div>
   </div>
