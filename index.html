@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>spwai</title>
+  <title>Particles.js Background</title>
   <!-- Include Particles.js library -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <!-- Include Stats.js library -->
@@ -22,6 +22,8 @@
     canvas {
       display: block;
       vertical-align: bottom;
+      position: absolute;
+      z-index: 1;
     }
     /* ---- particles.js container ---- */
     #particles-js {
@@ -33,7 +35,7 @@
       background-repeat: no-repeat;
       background-size: 20%;
       background-position: 50% 50%;
-      z-index: 1;
+      z-index: 0;
     }
     /* ---- Custom text style ---- */
     #custom-text {
@@ -42,12 +44,8 @@
       font-weight: bold;
       color: #ffffff;
       z-index: 2;
-      transition: transform 0.3s ease-in-out, letter-spacing 0.3s ease-in-out;
-    }
-    /* Hover effects */
-    #custom-text:hover {
-      transform: scale(1.2); /* Scale up on hover */
-      letter-spacing: 4px; /* Increase letter spacing on hover */
+      position: absolute;
+      top: 75%;
     }
   </style>
   <!-- Include Jetbrains Mono font -->
@@ -89,7 +87,7 @@
           "value": 1,
           "random": true,
           "anim": {
-            "enable": true,
+            "enable": false,
             "speed": 1,
             "opacity_min": 0,
             "sync": false
@@ -113,7 +111,7 @@
           "width": 1
         },
         "move": {
-          "enable": true,
+          "enable": false,
           "speed": 1,
           "direction": "none",
           "random": true,
