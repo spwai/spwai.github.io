@@ -14,6 +14,9 @@
     body {
       margin: 0;
       font: normal 75% Arial, Helvetica, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       height: 100vh;
     }
     canvas {
@@ -38,10 +41,13 @@
       font-size: 3em;
       font-weight: bold;
       color: #ffffff;
-      position: absolute;
-      top: 25%;
-      left: 50%;
-      transform: translateX(-50%);
+      z-index: 2;
+      transition: transform 0.3s ease-in-out, letter-spacing 0.3s ease-in-out;
+    }
+    /* Hover effects */
+    #custom-text:hover {
+      transform: scale(1.2); /* Scale up on hover */
+      letter-spacing: 4px; /* Increase letter spacing on hover */
     }
   </style>
   <!-- Include Jetbrains Mono font -->
@@ -83,7 +89,7 @@
           "value": 1,
           "random": true,
           "anim": {
-            "enable": false,
+            "enable": true,
             "speed": 1,
             "opacity_min": 0,
             "sync": false
@@ -182,4 +188,4 @@
   <!-- Your other HTML content goes here -->
 
 </body>
-</
+</html>
