@@ -23,26 +23,26 @@
 
     #panel-container {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-template-rows: repeat(2, 9fr);
-      grid-gap: 30px;
+      grid-template-columns: repeat(4, 1fr); /* Adjusted for 4 panels */
+      grid-template-rows: repeat(2, 9fr); /* 4 times bigger */
+      grid-gap: 30px; /* Increased padding in between */
       justify-content: center;
       align-items: center;
-      height: 80vh;
-      padding: 10% 5% 0 5%;
+      height: 80vh; /* Adjusted height */
+      padding: 10% 5% 0 5%; /* Added more padding on the sides */
     }
 
     .panel {
-      background-color: rgb(52, 53, 65);
-      padding: 120px;
+      background-color: rgb(52, 53, 65); /* Panel background color */
+      padding: 120px; /* 4 times bigger padding */
       border-radius: 20px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
       text-align: center;
       transform: scale(1);
       transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
       overflow: hidden;
-      color: white;
-      font-family: 'Poppins', sans-serif;
+      color: white; /* Text color */
+      font-family: 'Poppins', sans-serif; /* Poppins font */
       height: 40vh;
       width: 30vh;
     }
@@ -53,18 +53,18 @@
     }
 
     .panel h2 {
-      font-size: 36px;
-      margin-bottom: 20px;
+      font-size: 36px; /* Increased font size */
+      margin-bottom: 20px; /* Increased margin */
     }
 
     .panel p {
-      font-size: 24px;
+      font-size: 24px; /* Increased font size */
       color: #ccc;
     }
   </style>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
-  <script src="three.r134.min.js"></script>
-  <script src="vanta.dots.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.22/dist/vanta.net.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       // Disable zoom on PC
@@ -74,7 +74,7 @@
         }
       });
 
-      VANTA.DOTS({
+      VANTA.NET({
         el: "#vanta-container",
         mouseControls: true,
         touchControls: true,
@@ -83,9 +83,6 @@
         minWidth: 200.0,
         scale: 1.0,
         scaleMobile: 1.0,
-        color: 0x313338,
-        backgroundColor: 0x1e1f22,
-        showLines: false
       });
     });
   </script>
@@ -93,7 +90,7 @@
 
 <body>
   <div id="vanta-container"></div>
-
+  
   <div id="panel-container">
     <div class="panel">
       <!-- Content for the panel -->
