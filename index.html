@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>Particles.js Background</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spwai</title>
   <!-- Include Particles.js library -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <!-- Include Stats.js library -->
@@ -13,13 +13,11 @@
     /* ---- reset ---- */
     body {
       margin: 0;
-      padding: 0;
       font: normal 75% Arial, Helvetica, sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100vh;
-      overflow: hidden; /* Hide overflow to prevent scrolling on mobile */
     }
     canvas {
       display: block;
@@ -27,13 +25,15 @@
     }
     /* ---- particles.js container ---- */
     #particles-js {
-      position: fixed;
+      position: absolute;
       width: 100%;
       height: 100%;
-      top: 0;
-      left: 0;
+      background-color: #232741;
+      background-image: url("");
+      background-repeat: no-repeat;
+      background-size: 20%;
+      background-position: 50% 50%;
       z-index: 1;
-      touch-action: none;
     }
     /* ---- Custom text style ---- */
     #custom-text {
@@ -46,8 +46,8 @@
     }
     /* Hover effects */
     #custom-text:hover {
-      transform: scale(1.2);
-      letter-spacing: 4px;
+      transform: scale(1.2); /* Scale up on hover */
+      letter-spacing: 4px; /* Increase letter spacing on hover */
     }
   </style>
   <!-- Include Jetbrains Mono font -->
