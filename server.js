@@ -18,8 +18,6 @@ app.use((req, res, next) => {
 
   // Specify a relative path for the log file (in the same directory as server.js)
   const filePath = path.join(__dirname, 'ip_log.txt');
-
-  // Log to console
   console.log(`Attempting to log IP to ${filePath}`);
 
   // Log to file with error handling
