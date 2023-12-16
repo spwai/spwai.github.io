@@ -3,53 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>spwai</title>
-  <!-- Add the required scripts -->
-  <script src="three.r134.min.js"></script>
-  <script src="vanta.dots.min.js"></script>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-    }
-    #your-element-selector {
-      height: 100vh; /* Set the height to fill the viewport */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-family: Arial, sans-serif;
-    }
-  </style>
+  <title>VANTA.js Dots Background</title>
+  <!-- Include VANTA.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.22/dist/vanta.dots.min.js"></script>
 </head>
 <body>
-
-<!-- Your HTML content goes here -->
-
-<!-- Add an element with the specified selector for the VANTA.DOTS background -->
-<div id="your-element-selector">
-
-
-  
-</div>
-
-<!-- Initialize VANTA.DOTS with the specified configuration -->
-<script>
-  VANTA.DOTS({
-    el: "#your-element-selector",
-    mouseControls: true,
-    touchControls: true,
-    gyroControls: false,
-    minHeight: 200.00,
-    minWidth: 200.00,
-    scale: 1.00,
-    scaleMobile: 1.00,
-    color: 0x313338,
-    color2: 0x0,
-    backgroundColor: 0x1e1f22,
-    showLines: false
-  });
-</script>
-
+  <script>
+    // Initialize VANTA.js dots background
+    VANTA.DOTS({
+      el: 'body', // Target the entire body as the container
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200.0,
+      minWidth: 200.0,
+      scale: 1.0,
+      scaleMobile: 1.0,
+      color: 0x313338, // Specify color without #
+      color2: 0x0,     // Specify color without #
+      backgroundColor: 0x1e1f22, // Specify color without #
+      showLines: false
+    });
+  </script>
 </body>
 </html>
