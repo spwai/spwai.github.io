@@ -65,29 +65,30 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.22/dist/vanta.topology.min.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // Disable zoom on PC
-      document.addEventListener('wheel', function (e) {
-        if (e.ctrlKey) {
-          e.preventDefault();
-        }
-      });
-
-      VANTA.TOPOLOGY({
-        el: "#vanta-container",
-        mouseControls: true,
-        touchControls: true,
-        gyroControls: false,
-        minHeight: 200.0,
-        minWidth: 200.0,
-        scale: 1.0,
-        scaleMobile: 1.0,
-        color: 0xff005a, // Corrected format
-        backgroundColor: 0x111111 // Corrected property name
-      });
+ <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Disable zoom on PC
+    document.addEventListener('wheel', function (e) {
+      if (e.ctrlKey) {
+        e.preventDefault();
+      }
     });
-  </script>
+
+    VANTA.TOPOLOGY({
+      el: "#vanta-container",
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200.0,
+      minWidth: 200.0,
+      scale: 1.0,
+      scaleMobile: 1.0,
+      color: 0xff005a,
+      backgroundColor: 0x111111
+    });
+  });
+</script>
+
 </head>
 
 <body>
