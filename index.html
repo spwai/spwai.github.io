@@ -14,26 +14,41 @@
     #vanta-container {
       width: 100%;
       height: 100%;
+      transition: transform 0.5s ease-in-out;
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.22/dist/vanta.net.min.js"></script>
   <script>
+    var scale = 1.0;
+
+    function handleZoom(event) {
+      if (event.scale < 1.0) {
+        // Zoom out
+        scale *= 0.9; // Adjust the scale factor as needed
+      } else {
+        // Zoom in (if needed)
+        // You can handle zoom in behavior here
+      }
+
+      document.getElementById('vanta-container').style.transform = 'scale(' + scale + ')';
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
-      // Disable pinch-to-zoom on mobile devices
+      // Disable zoom on PC
+      document.addEventListener('wheel', function (e) {
+        if (e.ctrlKey) {
+          e.preventDefault();
+        }
+      });
+
+      // Disable pinch-to-zoom on PC
       document.addEventListener('gesturestart', function (e) {
         e.preventDefault();
       });
 
-      // Prevent double-tap to zoom on mobile devices
-      var lastTouchEnd = 0;
-      document.addEventListener('touchend', function (event) {
-        var now = new Date().getTime();
-        if (now - lastTouchEnd <= 300) {
-          event.preventDefault();
-        }
-        lastTouchEnd = now;
-      }, false);
+      // Handle pinch-to-zoom manually on mobile devices
+      document.addEventListener('gesturechange', handleZoom);
 
       VANTA.NET({
         el: "#vanta-container",
