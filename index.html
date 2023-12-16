@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Particles.js Background</title>
+  <title>Spwai</title>
   <!-- Include Particles.js library -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <!-- Include Stats.js library -->
@@ -38,16 +38,16 @@
     /* ---- Custom text style ---- */
     #custom-text {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 3em;
+      font-size: 4em; /* Increase text size */
       font-weight: bold;
       color: #ffffff;
       z-index: 2;
-      transition: transform 0.3s ease-in-out, letter-spacing 0.3s ease-in-out;
+      transition: transform 0.2s ease-in-out, letter-spacing 0.2s ease-in-out;
     }
     /* Hover effects */
     #custom-text:hover {
-      transform: scale(1.2); /* Scale up on hover */
-      letter-spacing: 4px; /* Increase letter spacing on hover */
+      transform: scale(1.4); /* Scale up on hover */
+      letter-spacing: 8px; /* Increase letter spacing on hover */
     }
   </style>
   <!-- Include Jetbrains Mono font -->
@@ -90,7 +90,7 @@
           "random": true,
           "anim": {
             "enable": true,
-            "speed": 1,
+            "speed": 2, /* Increase animation speed */
             "opacity_min": 0,
             "sync": false
           }
@@ -114,7 +114,7 @@
         },
         "move": {
           "enable": true,
-          "speed": 1,
+          "speed": 2, /* Increase movement speed */
           "direction": "none",
           "random": true,
           "straight": false,
@@ -179,13 +179,4 @@
     function update() {
       stats.begin();
       stats.end();
-      requestAnimationFrame(update);
-    }
-
-    requestAnimationFrame(update);
-  </script>
-
-  <!-- Your other HTML content goes here -->
-
-</body>
-</html>
+     
