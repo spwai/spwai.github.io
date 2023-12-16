@@ -23,7 +23,8 @@
 
     #panel-container {
       display: grid;
-      grid-template-columns: repeat(6, 1fr); /* All panels in one row */
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 9fr); /* 4 times bigger */
       grid-gap: 30px; /* Increased padding in between */
       justify-content: center;
       align-items: center;
@@ -33,7 +34,7 @@
 
     .panel {
       background-color: rgb(52, 53, 65); /* Panel background color */
-      padding: 80px; /* 3 times bigger padding */
+      padding: 120px; /* 4 times bigger padding */
       border-radius: 20px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
       text-align: center;
@@ -107,16 +108,6 @@
     <div class="panel">
       <!-- Content for the panel -->
       <h2>Panel Title 4</h2>
-      <p>Panel content goes here.</p>
-    </div>
-    <div class="panel">
-      <!-- Content for the panel -->
-      <h2>Panel Title 5</h2>
-      <p>Panel content goes here.</p>
-    </div>
-    <div class="panel">
-      <!-- Content for the panel -->
-      <h2>Panel Title 6</h2>
       <p>Panel content goes here.</p>
     </div>
   </div>
