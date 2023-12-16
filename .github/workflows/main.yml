@@ -19,7 +19,7 @@ jobs:
         node-version: '14'
 
     - name: Change to project directory
-      run: cd spwai.github.io  # Adjust the directory name based on your project structure
+      run: cd $GITHUB_WORKSPACE
 
     - name: Run Node.js server script
       run: node server.js
