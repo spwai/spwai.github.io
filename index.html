@@ -20,37 +20,22 @@
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.22/dist/vanta.net.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
   <script>
     var scale = 1.0;
-    var initialDistance;
 
-    function handleTouchMove(event) {
+    function handlePinch(event) {
       event.preventDefault();
 
-      if (event.touches.length === 2) {
-        var x1 = event.touches[0].clientX;
-        var y1 = event.touches[0].clientY;
-        var x2 = event.touches[1].clientX;
-        var y2 = event.touches[1].clientY;
-
-        var distance = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-
-        if (!initialDistance) {
-          initialDistance = distance;
-        }
-
-        var delta = distance - initialDistance;
-
-        if (delta < 0) {
-          // Zoom out
-          scale *= 1 - delta / 1000; // Adjust the scale factor as needed
-        } else {
-          // Zoom in (if needed)
-          // You can handle zoom in behavior here
-        }
-
-        document.getElementById('vanta-container').style.transform = 'scale(' + scale + ')';
+      if (event.scale < 1.0) {
+        // Zoom out
+        scale *= 1 - event.scale / 100; // Adjust the scale factor as needed
+      } else {
+        // Zoom in (if needed)
+        // You can handle zoom in behavior here
       }
+
+      document.getElementById('vanta-container').style.transform = 'scale(' + scale + ')';
     }
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -61,8 +46,12 @@
         }
       });
 
-      // Handle pinch-to-zoom manually on mobile devices
-      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      // Initialize Hammer.js
+      var hammer = new Hammer(document.getElementById('vanta-container'));
+
+      // Handle pinch-to-zoom using Hammer.js
+      hammer.get('pinch').set({ enable: true });
+      hammer.on('pinch', handlePinch);
 
       VANTA.NET({
         el: "#vanta-container",
