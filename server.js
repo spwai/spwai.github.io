@@ -1,3 +1,5 @@
+console.log('Server script is running...');
+
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -5,8 +7,12 @@ const path = require('path');
 const app = express();
 const PORT = 3000;
 
+console.log('Express and other dependencies loaded...');
+
 // Your middleware
 app.use((req, res, next) => {
+  console.log('Middleware is being executed...');
+
   const ip = req.ip || req.connection.remoteAddress;
   console.log(`Incoming request from IP: ${ip}`);
 
@@ -30,6 +36,7 @@ app.use((req, res, next) => {
 
 // Your routes
 app.get('/', (req, res) => {
+  console.log('Handling GET request...');
   res.send('Hello, World!');
 });
 
