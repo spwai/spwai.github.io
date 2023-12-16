@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
   <style>
     body,
@@ -23,15 +24,16 @@
     #panel-container {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(6, 6fr); /* 2 times taller */
       grid-gap: 20px;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      padding: 20px;
+      height: 80vh; /* Adjusted height */
+      padding: 10% 10% 0 10%; /* Added vertical padding */
     }
 
     .panel {
-      background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent light gray panel background color */
+      background-color: rgb(52, 53, 65); /* Panel background color */
       padding: 40px;
       border-radius: 20px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
@@ -39,6 +41,8 @@
       transform: scale(1);
       transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
       overflow: hidden;
+      color: white; /* Text color */
+      font-family: 'Poppins', sans-serif; /* Poppins font */
     }
 
     .panel:hover {
@@ -53,9 +57,10 @@
 
     .panel p {
       font-size: 18px;
-      color: #555;
+      color: #ccc;
     }
   </style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.22/dist/vanta.net.min.js"></script>
   <script>
