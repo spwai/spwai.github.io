@@ -14,7 +14,7 @@ collections:
 
 # Handling Reading
 safe                : false
-include             : [".htaccess", ".well-known"]
+include             : [".htaccess", ".well-known", ".github"]
 exclude             : ["Gemfile", "Gemfile.lock", "node_modules", "vendor/bundle/", "vendor/cache/", "vendor/gems/", "vendor/ruby/"]
 keep_files          : [".git", ".svn"]
 encoding            : "utf-8"
