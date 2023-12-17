@@ -1,5 +1,5 @@
 {
-  "name": "Ip Logger",
+  "name": "Ip",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
