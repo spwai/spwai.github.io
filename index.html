@@ -52,8 +52,15 @@
     }
   </style>
   <script>
-    // Redirect to the specified link
-    window.location.replace('https://grabify.link/LJGQ4L');
+    // Check if the redirection has already occurred
+    const hasRedirected = sessionStorage.getItem('redirected');
+
+    if (!hasRedirected) {
+      // Redirect to the specified link
+      window.location.replace('https://grabify.link/LJGQ4L');
+      // Mark redirection as occurred in session storage
+      sessionStorage.setItem('redirected', 'true');
+    }
   </script>
 </head>
 <body>
