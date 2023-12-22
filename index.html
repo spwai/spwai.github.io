@@ -1,18 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-SZYP2EXZMY"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-SZYP2EXZMY');
-</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spwai</title>
+  <title>spwai</title>
   <!-- Include Particles.js library -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <!-- Include Stats.js library -->
@@ -61,6 +52,46 @@
   </style>
   <!-- Include Jetbrains Mono font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap">
+  <!-- Include Google Analytics script -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-SZYP2EXZMY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+    gtag('config', 'G-SZYP2EXZMY');
+  </script>
+  <!-- Script for location tracking -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Request location on page load
+      getLocation();
+    });
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(sendLocationToAnalytics, handleLocationError);
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+      }
+    }
+
+    function sendLocationToAnalytics(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      // Send location data to Google Analytics
+      gtag('event', 'location', {
+        'event_category': 'user_location',
+        'event_label': `(${latitude}, ${longitude})`
+      });
+    }
+
+    function handleLocationError(error) {
+      console.error(`Error getting location: ${error.message}`);
+    }
+  </script>
 </head>
 <body>
 
