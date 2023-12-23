@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>spwai</title>
+  <title>Modern Particles.js Background</title>
   <!-- Include Particles.js library -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <!-- Include Stats.js library -->
@@ -15,7 +15,7 @@
       margin: 0;
       font: normal 75% Arial, Helvetica, sans-serif;
       display: flex;
-      align-items: flex-end; /* Align items to the bottom of the page */
+      align-items: center;
       justify-content: center;
       height: 100vh;
       background-color: #2C3E50; /* Set the background color to a modern shade */
@@ -23,8 +23,6 @@
     canvas {
       display: block;
       vertical-align: bottom;
-      position: absolute;
-      z-index: 1;
     }
     /* ---- particles.js container ---- */
     #particles-js {
@@ -52,21 +50,6 @@
       transform: scale(1.2); /* Scale up on hover */
       letter-spacing: 4px; /* Increase letter spacing on hover */
     }
-    /* ---- Custom text boxes ---- */
-    .text-box {
-      margin-top: 20px;
-      padding: 10px;
-      background-color: #3498db; /* Set the box color */
-      border-radius: 15px; /* Add rounded corners */
-      display: inline-block;
-      color: #ffffff;
-      text-decoration: none;
-      transition: background-color 0.3s ease-in-out;
-      z-index: 2; /* Ensure it's above the particles */
-    }
-    .text-box:hover {
-      background-color: #2980b9; /* Darker color on hover */
-    }
   </style>
   <!-- Include Jetbrains Mono font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap">
@@ -75,11 +58,6 @@
 
   <!-- particles.js container -->
   <div id="particles-js"></div>
-
-  <!-- Text boxes with links -->
-  <div class="text-box">
-    <a href="https://www.youtube.com/@spwaii" target="_blank">Visit My YouTube Channel</a>
-  </div>
 
   <!-- Custom text -->
   <div id="custom-text">Spwai</div>
