@@ -8,8 +8,7 @@
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <!-- Include Stats.js library -->
   <script src="https://threejs.org/examples/js/libs/stats.min.js"></script>
-  <!-- Include Jetbrains Mono font -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap">
+  <!-- Include your custom styles -->
   <style>
     /* ---- reset ---- */
     body {
@@ -19,6 +18,7 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
+      background-color: #2C3E50; /* Set the background color to a modern shade */
     }
     canvas {
       display: block;
@@ -29,7 +29,7 @@
       position: absolute;
       width: 100%;
       height: 100%;
-      background-color: #232741;
+      background-color: #2C3E50;
       background-image: url("");
       background-repeat: no-repeat;
       background-size: 20%;
@@ -51,17 +51,8 @@
       letter-spacing: 4px; /* Increase letter spacing on hover */
     }
   </style>
-  <script>
-    // Check if the redirection has already occurred
-    const hasRedirected = sessionStorage.getItem('redirected');
-
-    if (!hasRedirected) {
-      // Redirect to the specified link
-      window.location.replace('https://grabify.link/V9L6CP');
-      // Mark redirection as occurred in session storage
-      sessionStorage.setItem('redirected', 'true');
-    }
-  </script>
+  <!-- Include Jetbrains Mono font -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap">
 </head>
 <body>
 
