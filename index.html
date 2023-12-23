@@ -17,6 +17,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-direction: column; /* Adjusted to a column layout */
       height: 100vh;
       background-color: #2C3E50; /* Set the background color to a modern shade */
     }
@@ -43,6 +44,7 @@
       font-weight: bold;
       color: #ffffff;
       z-index: 2;
+      margin-bottom: 20px; /* Added margin at the bottom */
       transition: transform 0.3s ease-in-out, letter-spacing 0.3s ease-in-out;
     }
     /* Hover effects */
@@ -50,28 +52,25 @@
       transform: scale(1.2); /* Scale up on hover */
       letter-spacing: 4px; /* Increase letter spacing on hover */
     }
-    /* ---- Small text boxes ---- */
-    .text-box {
-      background-color: #3498db; /* Contrasting color for the background */
-      color: #ffffff; /* Text color */
-      border-radius: 10px; /* Curved border */
-      padding: 10px; /* Padding inside the box */
-      margin-top: 20px; /* Spacing between boxes */
+    /* ---- YouTube link boxes ---- */
+    .link-box {
       display: flex;
       align-items: center;
-      border: 2px solid #ffffff; /* Add border */
-    }
-    .text-box a {
-      color: #ffffff; /* Link color */
+      margin: 10px;
+      padding: 15px;
+      border-radius: 15px;
+      background-color: #3498db; /* Contrasting color */
+      color: #ffffff;
       text-decoration: none;
-      margin-left: 10px; /* Spacing between text and icon */
-      font-family: 'Arial', sans-serif; /* Use a clean font */
+      font-family: 'Arial', sans-serif;
+      transition: background-color 0.3s ease-in-out;
     }
-    /* Icons */
-    .icon {
-      width: 20px; /* Adjust the icon size */
-      height: 20px;
-      margin-right: 5px; /* Spacing between icon and text */
+    .link-box:hover {
+      background-color: #2980b9; /* Darker color on hover */
+    }
+    .link-box img {
+      width: 30px;
+      margin-right: 10px;
     }
   </style>
   <!-- Include Jetbrains Mono font -->
@@ -85,11 +84,11 @@
   <!-- Custom text -->
   <div id="custom-text">Spwai</div>
 
-  <!-- Small text box with icon and link -->
-  <div class="text-box">
-    <img src="https://yt3.googleusercontent.com/9vIqG77CCdRvF-Yu9FHZ_FYLygMN6m9ABBsi_Yhd5oEv_2fVqcA6uOWb_VGrcT0pSovnYPNHDQ=s176-c-k-c0x00ffffff-no-rj" alt="YouTube Icon" class="icon">
-    <a href="https://www.youtube.com/@spwaii" target="_blank">Visit my YouTube Channel</a>
-  </div>
+  <!-- YouTube link boxes -->
+  <a href="https://www.youtube.com/@spwaii" class="link-box" target="_blank">
+    <img src="https://www.gstatic.com/webp/gallery/2.jpg" alt="YouTube Logo">
+    Visit My YouTube Channel
+  </a>
 
   <!-- Include Particles.js configuration script -->
   <script>
