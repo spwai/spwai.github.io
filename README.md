@@ -1,1 +1,1 @@
-https://spwai.github.io/
+Chatgpt 🥺🩷
