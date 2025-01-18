@@ -25,7 +25,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 250px;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.25);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
@@ -47,7 +47,24 @@
             color: white;
             margin: 0;
         }
+
+        .icon-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .icon-container a {
+            margin: 0 10px;
+            text-decoration: none;
+        }
+
+        .icon-container i {
+            font-size: 1.5em;
+            color: white;
+        }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div id="particles-js"></div>
@@ -55,6 +72,12 @@
     <div class="profile-card">
         <img src="pfp.jpg" alt="Profile Picture">
         <h1>Spwai</h1>
+        <div class="icon-container">
+            <a href="https://github.com/spwai" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="https://xbox.com" target="_blank"><i class="fab fa-xbox"></i></a>
+            <a href="https://discord.com" target="_blank"><i class="fab fa-discord"></i></a>
+            <a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i></a>
+        </div>
     </div>
 
     <script>
