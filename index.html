@@ -57,16 +57,22 @@
         .icon-container a {
             margin: 0 10px;
             text-decoration: none;
-            transition: transform 0.3s ease; /* Add smooth scaling transition */
+            transition: transform 0.3s ease, color 0.3s ease; /* Add transition for color change */
         }
 
         .icon-container a:hover {
-            transform: scale(1.1); /* Slight scaling effect */
+            transform: scale(1.2); /* Increased scaling effect */
+            color: #f1c40f; /* Change color to a yellowish hue on hover */
         }
 
         .icon-container i {
             font-size: 1.5em;
             color: white;
+        }
+
+        /* Disable text selection */
+        * {
+            user-select: none;
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
