@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Packs :3</title>
+    <link rel="icon" href="icon.png" type="image/x-icon">
+
+    <!-- Open Graph Metadata for Discord Embed -->
+    <meta property="og:title" content="Packs :3" />
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool'></script>
+
+    <script>
+        /* Load particles.js with a custom configuration */
+        particlesJS.load('particles-js', 'particles.json', function() {
+            console.log('particles.js config loaded');
+        });
+    </script>
+</body>
+</html>
