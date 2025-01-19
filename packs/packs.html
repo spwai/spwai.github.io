@@ -44,6 +44,9 @@
             text-align: center;
             padding: 20px;
             font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Ensures items are spaced correctly */
             transition: transform 0.3s ease; /* Scaling effect for the card */
         }
 
@@ -62,19 +65,20 @@
             font-size: 1.5em;
             color: white;
             margin: 0;
+            margin-bottom: 15px; /* Space between title and image */
         }
 
         /* Download Button Styling */
         .download-btn {
             padding: 10px 20px;
-            background-color: #f1c40f;
-            color: white;
+            background-color: white; /* Start white */
+            color: #333;
             text-decoration: none;
             border-radius: 50px;
             font-weight: bold;
             align-self: center;
-            margin-top: auto; /* Push the button to the bottom */
             transition: transform 0.3s ease, background-color 0.3s ease, opacity 0.3s ease; /* Added fade effect */
+            margin-top: auto; /* Push the button to the bottom */
         }
 
         .download-btn:hover {
@@ -96,8 +100,8 @@
 
     <!-- First Pack Card -->
     <div class="profile-card">
-        <img src="ffa.jpg" alt="ffa">
         <h1>FFA</h1>
+        <img src="ffa.jpg" alt="ffa">
         <a href="download-link-ffa.zip" class="download-btn">Download →</a>
     </div>
 
