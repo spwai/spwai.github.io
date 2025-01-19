@@ -30,11 +30,12 @@
             height: 100%;
         }
 
+        /* Profile Card Styling */
         .profile-card {
             position: relative;
             width: 250px;
             height: 500px;
-            margin: 15px;
+            margin: 30px; /* Increased space between cards */
             background: rgba(255, 255, 255, 0.50);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
@@ -43,6 +44,11 @@
             text-align: center;
             padding: 20px;
             font-family: Arial, sans-serif;
+            transition: transform 0.3s ease; /* Scaling effect for the card */
+        }
+
+        .profile-card:hover {
+            transform: scale(1.05); /* Slight scaling on hover */
         }
 
         .profile-card img {
@@ -57,7 +63,27 @@
             color: white;
             margin: 0;
         }
-        
+
+        /* Download Button Styling */
+        .download-btn {
+            padding: 10px 20px;
+            background-color: #f1c40f;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            align-self: center;
+            margin-top: auto; /* Push the button to the bottom */
+            transition: transform 0.3s ease, background-color 0.3s ease, opacity 0.3s ease; /* Added fade effect */
+        }
+
+        .download-btn:hover {
+            transform: scale(1.2); /* Expand the button */
+            background-color: #d1ebf6; /* Fade to the background color */
+            color: #333; /* Change the text color to dark */
+            opacity: 0.7; /* Add opacity effect */
+        }
+
         /* Disable text selection */
         * {
             user-select: none;
@@ -72,12 +98,16 @@
     <div class="profile-card">
         <img src="ffa.jpg" alt="ffa">
         <h1>FFA</h1>
+        <a href="download-link-ffa.zip" class="download-btn">Download →</a>
     </div>
 
     <!-- Second Pack Card -->
     <div class="profile-card">
         <h1>UI</h1>
         <img src="ui.jpg" alt="ui">
+        <a href="download-link-ui.zip" class="download-btn">Download →</a>
+    </div>
+
     <script>
         /* Load particles.js with a custom configuration */
         particlesJS.load('particles-js', '../particles.json', function() {
