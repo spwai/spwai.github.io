@@ -12,9 +12,38 @@
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool'></script>
 
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #d1ebf6;
+        }
+
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        h1 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: Arial, sans-serif;
+            color: white;
+            font-size: 2em;
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    <h1>Packs :3</h1>
+
     <script>
-        /* Load particles.js with a custom configuration */
-        particlesJS.load('particles-js', 'particles.json', function() {
+        /* Load particles.js with the corrected path */
+        particlesJS.load('particles-js', '../particles.json', function() {
             console.log('particles.js config loaded');
         });
     </script>
