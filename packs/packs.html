@@ -3,200 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pack Carousel</title>
+    <title>Packs :3</title>
     <link rel="icon" href="icon.png" type="image/x-icon">
+
+    <!-- Open Graph Metadata for Discord Embed -->
+    <meta property="og:title" content="Packs :3" />
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <style>
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
             background-color: #d1ebf6;
-            font-family: Arial, sans-serif;
+        }
+
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .carousel {
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-        }
-
-        #carousel-container {
-            width: 90%;
-            max-width: 1400px;
             overflow: hidden;
-            position: relative;
         }
 
-        #carousel {
+        .carousel-container {
             display: flex;
-            transition: transform 0.5s ease-in-out;
+            transition: transform 0.5s ease;
+            will-change: transform;
         }
 
         .card {
-            min-width: 25%; /* 4 cards visible */
+            flex: 0 0 25%;
             margin: 0 10px;
-            text-align: center;
-            box-sizing: border-box;
+            height: 20vh;
             background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(5px);
-            border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            transform: scale(0.9); /* Smaller for off-screen effect */
-            opacity: 0.7; /* Slightly faded when off-screen */
-            transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.3s ease;
-        }
-
-        .card.active {
-            transform: scale(1); /* Normal size for visible cards */
-            opacity: 1;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.5s ease, opacity 0.5s ease;
         }
 
         .card img {
-            width: 100%;
-            border-radius: 15px;
-            margin-bottom: 15px;
+            width: 80%;
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 10px;
         }
 
-        .card h2 {
-            font-size: 1.5em;
+        .card h3 {
+            font-size: 1.2em;
             color: #333;
-            margin: 10px 0;
+            margin: 0;
+            text-align: center;
         }
 
-        .download-btn {
-            display: inline-block;
-            padding: 12px 25px;
+        .card button {
+            padding: 10px 20px;
+            font-size: 1em;
             background-color: white;
+            border: none;
+            border-radius: 25px;
             color: #333;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: bold;
-            transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
-        .download-btn:hover {
+        .card button:hover {
+            background-color: #add8e6;
             transform: scale(1.1);
-            background-color: #a8dff0; /* Light Cinnamoroll blue */
-            color: white;
         }
 
-        /* Navigation Arrows */
         .arrow {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 2.5em;
-            color: #333;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.7);
-            border: none;
+            font-size: 2em;
+            background: white;
             border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             transition: background-color 0.3s ease;
-            z-index: 10;
+            z-index: 2;
         }
 
         .arrow:hover {
-            background-color: #f1c40f;
-            color: white;
+            background-color: #add8e6;
         }
 
-        .arrow-left {
-            left: 10px;
+        .arrow.left {
+            left: 20px;
         }
 
-        .arrow-right {
-            right: 10px;
+        .arrow.right {
+            right: 20px;
         }
+
+        /* Blur effect for cards fading off-screen */
+        .card.fade {
+            opacity: 0.5;
+            transform: scale(0.9);
+        }
+
     </style>
 </head>
 <body>
-    <div id="carousel-container">
-        <!-- Left Arrow -->
-        <button class="arrow arrow-left" onclick="shiftCarousel(-1)">‹</button>
+    <div id="particles-js"></div>
 
-        <!-- Carousel -->
-        <div id="carousel">
-            <!-- Cards -->
-            <div class="card active">
+    <div class="carousel">
+        <div class="arrow left" onclick="moveCarousel(-1)">&#8249;</div>
+        <div class="carousel-container" id="carousel">
+            <div class="card" data-index="0">
                 <img src="pack1.jpg" alt="Pack 1">
-                <h2>Pack Title 1</h2>
-                <a href="pack1.zip" class="download-btn">Download →</a>
+                <h3>Pack Title 1</h3>
+                <button>Download →</button>
             </div>
-            <div class="card active">
+            <div class="card" data-index="1">
                 <img src="pack2.jpg" alt="Pack 2">
-                <h2>Pack Title 2</h2>
-                <a href="pack2.zip" class="download-btn">Download →</a>
+                <h3>Pack Title 2</h3>
+                <button>Download →</button>
             </div>
-            <div class="card">
+            <div class="card" data-index="2">
                 <img src="pack3.jpg" alt="Pack 3">
-                <h2>Pack Title 3</h2>
-                <a href="pack3.zip" class="download-btn">Download →</a>
+                <h3>Pack Title 3</h3>
+                <button>Download →</button>
             </div>
-            <div class="card">
+            <div class="card" data-index="3">
                 <img src="pack4.jpg" alt="Pack 4">
-                <h2>Pack Title 4</h2>
-                <a href="pack4.zip" class="download-btn">Download →</a>
+                <h3>Pack Title 4</h3>
+                <button>Download →</button>
             </div>
-            <div class="card">
+            <div class="card" data-index="4">
                 <img src="pack5.jpg" alt="Pack 5">
-                <h2>Pack Title 5</h2>
-                <a href="pack5.zip" class="download-btn">Download →</a>
+                <h3>Pack Title 5</h3>
+                <button>Download →</button>
             </div>
-            <div class="card">
+            <div class="card" data-index="5">
                 <img src="pack6.jpg" alt="Pack 6">
-                <h2>Pack Title 6</h2>
-                <a href="pack6.zip" class="download-btn">Download →</a>
+                <h3>Pack Title 6</h3>
+                <button>Download →</button>
             </div>
-            <div class="card">
+            <div class="card" data-index="6">
                 <img src="pack7.jpg" alt="Pack 7">
-                <h2>Pack Title 7</h2>
-                <a href="pack7.zip" class="download-btn">Download →</a>
+                <h3>Pack Title 7</h3>
+                <button>Download →</button>
             </div>
-            <div class="card">
+            <div class="card" data-index="7">
                 <img src="pack8.jpg" alt="Pack 8">
-                <h2>Pack Title 8</h2>
-                <a href="pack8.zip" class="download-btn">Download →</a>
+                <h3>Pack Title 8</h3>
+                <button>Download →</button>
             </div>
         </div>
-
-        <!-- Right Arrow -->
-        <button class="arrow arrow-right" onclick="shiftCarousel(1)">›</button>
+        <div class="arrow right" onclick="moveCarousel(1)">&#8250;</div>
     </div>
 
     <script>
         const carousel = document.getElementById('carousel');
-        const cards = document.querySelectorAll('.card');
-        const totalCards = 8; // Total number of cards
-        const visibleCards = 4; // Number of cards visible at a time
-        let currentIndex = 0; // Index of the first visible card
+        let currentIndex = 0;
+        const totalCards = document.querySelectorAll('.card').length;
 
-        // Function to shift the carousel
-        function shiftCarousel(direction) {
-            currentIndex += direction;
+        function updateCarousel() {
+            const offset = -currentIndex * 25; // 25% width per card
+            carousel.style.transform = `translateX(${offset}%)`;
 
-            // Prevent scrolling out of bounds
-            if (currentIndex < 0) {
-                currentIndex = 0;
-            } else if (currentIndex > totalCards - visibleCards) {
-                currentIndex = totalCards - visibleCards;
-            }
-
-            // Update carousel transform
-            const translateX = -(currentIndex * (100 / visibleCards));
-            carousel.style.transform = `translateX(${translateX}%)`;
-
-            // Update active card classes for blur/opacity
-            cards.forEach((card, index) => {
-                if (index >= currentIndex && index < currentIndex + visibleCards) {
-                    card.classList.add('active');
-                } else {
-                    card.classList.remove('active');
-                }
+            // Update fading effect
+            document.querySelectorAll('.card').forEach((card, index) => {
+                card.classList.toggle('fade', index < currentIndex || index >= currentIndex + 4);
             });
         }
+
+        function moveCarousel(direction) {
+            currentIndex += direction;
+            if (currentIndex < 0) {
+                currentIndex = totalCards - 4;
+            } else if (currentIndex > totalCards - 4) {
+                currentIndex = 0;
+            }
+            updateCarousel();
+        }
+
+        updateCarousel(); // Initialize carousel position
+
+        /* Load particles.js with a custom configuration */
+        particlesJS.load('particles-js', '../particles.json', function() {
+            console.log('particles.js config loaded');
+        });
     </script>
 </body>
 </html>
