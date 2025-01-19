@@ -3,20 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pack Card Example</title>
+    <title>Packs :3</title>
     <link rel="icon" href="icon.png" type="image/x-icon">
 
+    <!-- Open Graph Metadata for Discord Embed -->
+    <meta property="og:title" content="Packs :3" />
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool'></script>
     <style>
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
             background-color: #d1ebf6;
-            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            flex-wrap: wrap;
         }
 
         #particles-js {
@@ -25,10 +30,10 @@
             height: 100%;
         }
 
-        .pack-card {
+        .profile-card {
             position: relative;
-            width: 300px;
-            height: 400px; /* Reduced height */
+            width: 250px;
+            margin: 15px;
             background: rgba(255, 255, 255, 0.50);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
@@ -36,58 +41,79 @@
             border-radius: 15px;
             text-align: center;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            z-index: 1;
+            font-family: Arial, sans-serif;
         }
 
-        .pack-card h2 {
-            margin: 0;
+        .profile-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 15px; /* Slightly rounded corners for images */
+            margin-bottom: 15px;
+        }
+
+        .profile-card h1 {
             font-size: 1.5em;
-            color: #333;
+            color: white;
+            margin: 0;
         }
 
-        .pack-card img {
-            width: 100%;
-            height: auto;
-            border-radius: 10px;
-            margin: 15px 0;
-            flex-grow: 1;
+        .icon-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
         }
 
-        .download-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: white;
-            color: #333;
+        .icon-container a {
+            margin: 0 10px;
             text-decoration: none;
-            border-radius: 50px;
-            font-weight: bold;
-            transition: transform 0.3s ease, background-color 0.3s ease;
-            align-self: center;
-            margin-top: auto; /* Ensure it stays at the bottom */
+            transition: transform 0.3s ease, color 0.3s ease;
         }
 
-        .download-btn:hover {
-            transform: scale(1.1);
-            background-color: #d1ebf6; /* Fade to background color */
+        .icon-container a:hover {
+            transform: scale(1.2);
+            color: #f1c40f;
+        }
+
+        .icon-container i {
+            font-size: 1.5em;
             color: white;
         }
+
+        /* Disable text selection */
+        * {
+            user-select: none;
+        }
     </style>
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div id="particles-js"></div>
 
-    <!-- Pack Card -->
-    <div class="pack-card">
-        <h2>FFA</h2>
-        <img src="ffa.jpg" alt="Pack Image">
-        <a href="pack-download-link.zip" class="download-btn">Download →</a>
+    <!-- First Pack Card -->
+    <div class="profile-card">
+        <img src="pfp.jpg" alt="Profile Picture">
+        <h1>Spwai</h1>
+        <div class="icon-container">
+            <a href="https://github.com/spwai"><i class="fab fa-github"></i></a>
+            <a href="https://www.xbox.com/en-US/play/user/spwai"><i class="fab fa-xbox"></i></a>
+            <a href=""><i class="fab fa-discord"></i></a>
+            <a href="https://youtube.com/@spwai"><i class="fab fa-youtube"></i></a>
+        </div>
     </div>
 
-   <script>
+    <!-- Second Pack Card -->
+    <div class="profile-card">
+        <img src="pfp.jpg" alt="Profile Picture">
+        <h1>Pack Title</h1>
+        <div class="icon-container">
+            <a href="https://github.com/spwai"><i class="fab fa-github"></i></a>
+            <a href="https://www.xbox.com/en-US/play/user/spwai"><i class="fab fa-xbox"></i></a>
+            <a href=""><i class="fab fa-discord"></i></a>
+            <a href="https://youtube.com/@spwai"><i class="fab fa-youtube"></i></a>
+        </div>
+    </div>
+
+    <script>
         /* Load particles.js with a custom configuration */
         particlesJS.load('particles-js', '../particles.json', function() {
             console.log('particles.js config loaded');
