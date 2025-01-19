@@ -3,13 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Packs :3</title>
+    <title>Pack Carousel</title>
     <link rel="icon" href="icon.png" type="image/x-icon">
-
-    <!-- Open Graph Metadata for Discord Embed -->
-    <meta property="og:title" content="Packs :3" />
-
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -17,190 +12,191 @@
             overflow: hidden;
             background-color: #d1ebf6;
             font-family: Arial, sans-serif;
-        }
-
-        #particles-js {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-
-        .carousel {
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
+            height: 100vh;
+        }
+
+        #carousel-container {
+            width: 90%;
+            max-width: 1400px;
             overflow: hidden;
-            width: 100%;
-            height: 80vh;
+            position: relative;
+        }
+
+        #carousel {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
         }
 
         .card {
-            flex: 0 0 15%;
-            max-height: 60%;
-            height: 100%;
+            min-width: 25%; /* 4 cards visible */
             margin: 0 10px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            transform: scale(0.8);
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            opacity: 0.6;
+            text-align: center;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transform: scale(0.9); /* Smaller for off-screen effect */
+            opacity: 0.7; /* Slightly faded when off-screen */
+            transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.3s ease;
         }
 
         .card.active {
-            transform: scale(1);
+            transform: scale(1); /* Normal size for visible cards */
             opacity: 1;
         }
 
         .card img {
             width: 100%;
-            height: 70%;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
-            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 15px;
         }
 
-        .card .title {
-            text-align: center;
-            font-size: 1.2em;
-            font-weight: bold;
+        .card h2 {
+            font-size: 1.5em;
+            color: #333;
             margin: 10px 0;
         }
 
-        .card button {
-            display: block;
-            margin: 10px auto;
-            padding: 10px 20px;
-            background: white;
-            border: 2px solid #d1ebf6;
+        .download-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: white;
+            color: #333;
+            text-decoration: none;
             border-radius: 50px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background 0.3s ease, transform 0.2s ease;
+            font-weight: bold;
+            transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
         }
 
-        .card button:hover {
-            background: #d1ebf6;
+        .download-btn:hover {
             transform: scale(1.1);
+            background-color: #a8dff0; /* Light Cinnamoroll blue */
+            color: white;
         }
 
+        /* Navigation Arrows */
         .arrow {
             position: absolute;
             top: 50%;
-            width: 50px;
-            height: 50px;
-            background: white;
+            transform: translateY(-50%);
+            font-size: 2.5em;
+            color: #333;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.7);
+            border: none;
             border-radius: 50%;
+            width: 60px;
+            height: 60px;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            transition: background 0.3s ease;
+            transition: background-color 0.3s ease;
+            z-index: 10;
         }
 
         .arrow:hover {
-            background: #d1ebf6;
+            background-color: #f1c40f;
+            color: white;
         }
 
-        .arrow.left {
-            left: 20px;
-            transform: translateY(-50%);
+        .arrow-left {
+            left: 10px;
         }
 
-        .arrow.right {
-            right: 20px;
-            transform: translateY(-50%);
-        }
-
-        .arrow i {
-            font-size: 1.5em;
-        }
-
-        @keyframes fade {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        .fade {
-            animation: fade 0.5s;
+        .arrow-right {
+            right: 10px;
         }
     </style>
 </head>
 <body>
-    <div id="particles-js"></div>
+    <div id="carousel-container">
+        <!-- Left Arrow -->
+        <button class="arrow arrow-left" onclick="shiftCarousel(-1)">‹</button>
 
-    <div class="carousel">
-        <div class="arrow left" onclick="shiftLeft()"><i class="fas fa-chevron-left"></i></div>
+        <!-- Carousel -->
+        <div id="carousel">
+            <!-- Cards -->
+            <div class="card active">
+                <img src="pack1.jpg" alt="Pack 1">
+                <h2>Pack Title 1</h2>
+                <a href="pack1.zip" class="download-btn">Download →</a>
+            </div>
+            <div class="card active">
+                <img src="pack2.jpg" alt="Pack 2">
+                <h2>Pack Title 2</h2>
+                <a href="pack2.zip" class="download-btn">Download →</a>
+            </div>
+            <div class="card">
+                <img src="pack3.jpg" alt="Pack 3">
+                <h2>Pack Title 3</h2>
+                <a href="pack3.zip" class="download-btn">Download →</a>
+            </div>
+            <div class="card">
+                <img src="pack4.jpg" alt="Pack 4">
+                <h2>Pack Title 4</h2>
+                <a href="pack4.zip" class="download-btn">Download →</a>
+            </div>
+            <div class="card">
+                <img src="pack5.jpg" alt="Pack 5">
+                <h2>Pack Title 5</h2>
+                <a href="pack5.zip" class="download-btn">Download →</a>
+            </div>
+            <div class="card">
+                <img src="pack6.jpg" alt="Pack 6">
+                <h2>Pack Title 6</h2>
+                <a href="pack6.zip" class="download-btn">Download →</a>
+            </div>
+            <div class="card">
+                <img src="pack7.jpg" alt="Pack 7">
+                <h2>Pack Title 7</h2>
+                <a href="pack7.zip" class="download-btn">Download →</a>
+            </div>
+            <div class="card">
+                <img src="pack8.jpg" alt="Pack 8">
+                <h2>Pack Title 8</h2>
+                <a href="pack8.zip" class="download-btn">Download →</a>
+            </div>
+        </div>
 
-        <div class="card" id="card-8">
-            <img src="pack8.jpg" alt="Pack 8">
-            <div class="title">Pack Title 8</div>
-            <button>Download →</button>
-        </div>
-        <div class="card" id="card-1">
-            <img src="pack1.jpg" alt="Pack 1">
-            <div class="title">Pack Title 1</div>
-            <button>Download →</button>
-        </div>
-        <div class="card active" id="card-2">
-            <img src="pack2.jpg" alt="Pack 2">
-            <div class="title">Pack Title 2</div>
-            <button>Download →</button>
-        </div>
-        <div class="card" id="card-3">
-            <img src="pack3.jpg" alt="Pack 3">
-            <div class="title">Pack Title 3</div>
-            <button>Download →</button>
-        </div>
-        <div class="card" id="card-4">
-            <img src="pack4.jpg" alt="Pack 4">
-            <div class="title">Pack Title 4</div>
-            <button>Download →</button>
-        </div>
-        <div class="card" id="card-5">
-            <img src="pack5.jpg" alt="Pack 5">
-            <div class="title">Pack Title 5</div>
-            <button>Download →</button>
-        </div>
-        <div class="card" id="card-6">
-            <img src="pack6.jpg" alt="Pack 6">
-            <div class="title">Pack Title 6</div>
-            <button>Download →</button>
-        </div>
-        <div class="card" id="card-7">
-            <img src="pack7.jpg" alt="Pack 7">
-            <div class="title">Pack Title 7</div>
-            <button>Download →</button>
-        </div>
-
-        <div class="arrow right" onclick="shiftRight()"><i class="fas fa-chevron-right"></i></div>
+        <!-- Right Arrow -->
+        <button class="arrow arrow-right" onclick="shiftCarousel(1)">›</button>
     </div>
 
     <script>
-        let cards = document.querySelectorAll(".card");
-        let currentIndex = 1;
+        const carousel = document.getElementById('carousel');
+        const cards = document.querySelectorAll('.card');
+        const totalCards = 8; // Total number of cards
+        const visibleCards = 4; // Number of cards visible at a time
+        let currentIndex = 0; // Index of the first visible card
 
-        function shiftLeft() {
-            const lastCard = cards[cards.length - 1];
-            document.querySelector(".carousel").insertBefore(lastCard, cards[0]);
-            cards = document.querySelectorAll(".card");
+        // Function to shift the carousel
+        function shiftCarousel(direction) {
+            currentIndex += direction;
+
+            // Prevent scrolling out of bounds
+            if (currentIndex < 0) {
+                currentIndex = 0;
+            } else if (currentIndex > totalCards - visibleCards) {
+                currentIndex = totalCards - visibleCards;
+            }
+
+            // Update carousel transform
+            const translateX = -(currentIndex * (100 / visibleCards));
+            carousel.style.transform = `translateX(${translateX}%)`;
+
+            // Update active card classes for blur/opacity
+            cards.forEach((card, index) => {
+                if (index >= currentIndex && index < currentIndex + visibleCards) {
+                    card.classList.add('active');
+                } else {
+                    card.classList.remove('active');
+                }
+            });
         }
-
-        function shiftRight() {
-            const firstCard = cards[0];
-            document.querySelector(".carousel").appendChild(firstCard);
-            cards = document.querySelectorAll(".card");
-        }
-
-        particlesJS.load('particles-js', 'particles.json', function() {
-            console.log('particles.js config loaded');
-        });
     </script>
 </body>
 </html>
