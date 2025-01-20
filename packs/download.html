@@ -12,15 +12,8 @@
     <!-- Google Font for better loading -->
     <link href="https://fonts.googleapis.com/css2?family=Arial:wght@400;700&display=swap" rel="stylesheet">
 
-    <!-- Google AdSense Account Verification -->
-    <meta name="google-adsense-account" content="ca-pub-8528624226261530">
-
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool'></script>
-
-    <!-- AdSense Script for Google Ads -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8528624226261530" crossorigin="anonymous"></script>
-
     <style>
         body {
             margin: 0;
@@ -77,7 +70,7 @@
 
     let countdown = 5;
     const interval = setInterval(function() {
-        downloadButton.textContent = `Download (${countdown})`;
+        downloadButton.textContent = Download (${countdown});
         countdown--;
         if (countdown < 0) {
             clearInterval(interval);
