@@ -67,7 +67,6 @@
     // Get the download button element
     const downloadButton = document.getElementById('download-button');
     const fileName = window.location.hash.substring(1);  // Get the part after the # (e.g., "woof.zip")
-    const fileUrl = fileName ? `https://spwai.github.io/packs/download.html#${fileName}` : ''; // Construct the URL
 
     let countdown = 5;
     const interval = setInterval(function() {
@@ -78,9 +77,15 @@
             downloadButton.textContent = 'Click to Download';
             downloadButton.style.cursor = 'pointer';
             downloadButton.style.pointerEvents = 'auto'; // Enable clicking
-            downloadButton.setAttribute('href', fileUrl); // Set the file URL for download
-            downloadButton.addEventListener('click', function() {
-                window.location.href = fileUrl; // Trigger download
+
+            // Set the href to the file in the same directory
+            downloadButton.setAttribute('href', fileName); // Just the file name (relative URL)
+            downloadButton.setAttribute('download', fileName); // Hint the browser to download the file
+
+            downloadButton.addEventListener('click', function(event) {
+                // Trigger the download directly when clicked
+                event.preventDefault();
+                window.location.href = fileName; // This will trigger the download in the same directory
             });
         }
     }, 1000);
@@ -90,5 +95,6 @@
         console.log('particles.js config loaded');
     });
 </script>
+
 </body>
 </html>
