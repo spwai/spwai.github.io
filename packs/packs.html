@@ -34,7 +34,7 @@
         .profile-card {
             position: relative;
             width: 250px;
-            margin: 30px;
+            margin: 30px; /* Increased space between cards */
             background: rgba(255, 255, 255, 0.50);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
@@ -45,16 +45,16 @@
             font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.3s ease;
+            justify-content: space-between; /* Ensures items are spaced correctly */
+            transition: transform 0.3s ease; /* Scaling effect for the card */
         }
 
         .profile-card:hover {
-            transform: scale(1.05);
+            transform: scale(1.05); /* Slight scaling on hover */
         }
 
         .profile-card img {
-            border-radius: 15px;
+            border-radius: 15px; /* Slightly rounded corners for images */
             margin-bottom: 15px;
         }
 
@@ -62,71 +62,37 @@
             font-size: 1.5em;
             color: white;
             margin: 0;
-            margin-bottom: 15px;
+            margin-bottom: 15px; /* Space between title and image */
         }
 
         /* Download Button Styling */
         .download-btn {
             padding: 10px 20px;
-            background-color: white;
+            background-color: white; /* Start white */
             opacity: 0.7;
             color: #333;
             text-decoration: none;
             border-radius: 50px;
             font-weight: bold;
             align-self: center;
-            transition: transform 0.3s ease, background-color 0.3s ease, opacity 0.3s ease;
-            margin-top: auto;
+            transition: transform 0.3s ease, background-color 0.3s ease, opacity 0.3s ease; /* Added fade effect */
+            margin-top: auto; /* Push the button to the bottom */
         }
 
         .download-btn:hover {
-            background-color: #d1ebf6;
-            color: #fff;
+            background-color: #d1ebf6; /* Fade to the background color */
+            color: #fff; /* Change the text color to dark */
         }
 
         /* Disable text selection */
         * {
             user-select: none;
         }
-
-        /* Circular Back Button Styling */
-        .back-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            width: 50px;
-            height: 50px;
-            background-color: white;
-            color: #333;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2em;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .back-btn:hover {
-            background-color: #d1ebf6;
-            transform: scale(1.1); /* Slight scaling on hover */
-        }
-
-        .back-btn:active {
-            transform: scale(0.95); /* Shrink effect on click */
-        }
-
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div id="particles-js"></div>
-
-    <!-- Back Button -->
-    <a href="https://spwai.github.io" class="back-btn">
-        <i class="fas fa-arrow-left"></i>
-    </a>
 
     <!-- First Pack Card -->
     <div class="profile-card">
@@ -141,6 +107,7 @@
     </div>
 
     <script>
+        /* Load particles.js with a custom configuration */
         particlesJS.load('particles-js', '../particles.json', function() {
             console.log('particles.js config loaded');
         });
