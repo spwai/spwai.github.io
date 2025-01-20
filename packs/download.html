@@ -61,7 +61,7 @@
     <div id="particles-js"></div>
 
     <!-- Download Button Section -->
-    <div class="download-btn" id="download-button">Download (5)</div>
+    <a id="download-button" class="download-btn" href="#" style="pointer-events: none;">Download (5)</a>
 
     <script>
         // Get the download button element
@@ -76,6 +76,8 @@
                 clearInterval(interval);
                 downloadButton.textContent = 'Click to Download';
                 downloadButton.style.cursor = 'pointer';
+                downloadButton.style.pointerEvents = 'auto'; // Enable clicking
+                downloadButton.setAttribute('href', fileUrl); // Set the file URL for download
                 downloadButton.addEventListener('click', function() {
                     window.location.href = fileUrl;
                 });
