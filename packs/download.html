@@ -63,10 +63,18 @@
     <!-- Download Button Section -->
     <a id="download-button" class="download-btn" href="#" style="pointer-events: none;">Download (5)</a>
 
-    <script>
+     <script>
         // Get the download button element
         const downloadButton = document.getElementById('download-button');
-        const fileUrl = window.location.hash === '#ffa.zip' ? 'https://spwai.github.io/packs/download.html#ffa.zip' : 'https://spwai.github.io/packs/download.html#ui.zip';
+        const fileHash = window.location.hash.substring(1); // Get the part after '#'
+
+        // Construct the relative file path from the hash
+        const fileUrl = fileHash ? fileHash : null;
+
+        if (!fileUrl) {
+            downloadButton.textContent = "Invalid download link";
+            return;
+        }
 
         let countdown = 5;
         const interval = setInterval(function() {
