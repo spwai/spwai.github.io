@@ -68,8 +68,8 @@
         const downloadButton = document.getElementById('download-button');
         const fileHash = window.location.hash.substring(1); // Get the part after '#'
 
-        // Construct the full download URL
-        const fileUrl = fileHash ? `${fileHash}` : null;
+        // Construct the relative file path from the hash
+        const fileUrl = fileHash ? fileHash : null;
 
         if (!fileUrl) {
             downloadButton.textContent = "Invalid download link";
@@ -85,9 +85,9 @@
                 downloadButton.textContent = 'Click to Download';
                 downloadButton.style.cursor = 'pointer';
                 downloadButton.style.pointerEvents = 'auto'; // Enable clicking
-                downloadButton.setAttribute('href', `https://spwai.github.io/packs/${fileHash}`);
+                downloadButton.setAttribute('href', fileUrl); // Set the file URL for download
                 downloadButton.addEventListener('click', function() {
-                    window.location.href = `https://spwai.github.io/packs/${fileHash}`;
+                    window.location.href = fileUrl;
                 });
             }
         }, 1000);
