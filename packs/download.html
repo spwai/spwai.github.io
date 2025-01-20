@@ -63,36 +63,32 @@
     <!-- Download Button Section -->
     <a id="download-button" class="download-btn" href="#" style="pointer-events: none;">Download (5)</a>
 
-    <script>
-        // Ensure particles.js is loaded first and runs smoothly
-        particlesJS.load('particles-js', '../particles.json', function() {
-            console.log('particles.js config loaded');
-        });
+<script>
+    // Get the download button element
+    const downloadButton = document.getElementById('download-button');
+    const fileName = window.location.hash.substring(1);  // Get the part after the # (e.g., "woof.zip")
+    const fileUrl = fileName ? `https://spwai.github.io/packs/download.html#${fileName}` : ''; // Construct the URL
 
-        // Set up the download functionality
-        const downloadButton = document.getElementById('download-button');
-        const fileHash = window.location.hash.substring(1); // Get the part after '#'
-
-        if (!fileHash) {
-            downloadButton.textContent = "Invalid download link";
-            return; // Stop if no valid hash is present
+    let countdown = 5;
+    const interval = setInterval(function() {
+        downloadButton.textContent = `Download (${countdown})`;
+        countdown--;
+        if (countdown < 0) {
+            clearInterval(interval);
+            downloadButton.textContent = 'Click to Download';
+            downloadButton.style.cursor = 'pointer';
+            downloadButton.style.pointerEvents = 'auto'; // Enable clicking
+            downloadButton.setAttribute('href', fileUrl); // Set the file URL for download
+            downloadButton.addEventListener('click', function() {
+                window.location.href = fileUrl; // Trigger download
+            });
         }
+    }, 1000);
 
-        const fileUrl = fileHash; // Directly use the hash part as the file name (e.g., ffa.zip)
-
-        let countdown = 5;
-        const interval = setInterval(function() {
-            downloadButton.textContent = `Download (${countdown})`;
-            countdown--;
-
-            if (countdown < 0) {
-                clearInterval(interval);
-                downloadButton.textContent = 'Click to Download';
-                downloadButton.style.cursor = 'pointer';
-                downloadButton.style.pointerEvents = 'auto'; // Enable clicking
-                downloadButton.setAttribute('href', fileUrl); // Set the file URL for download
-            }
-        }, 1000);
-    </script>
+    /* Load particles.js with a custom configuration */
+    particlesJS.load('particles-js', '../particles.json', function() {
+        console.log('particles.js config loaded');
+    });
+</script>
 </body>
 </html>
