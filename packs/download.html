@@ -63,18 +63,23 @@
     <!-- Download Button Section -->
     <a id="download-button" class="download-btn" href="#" style="pointer-events: none;">Download (5)</a>
 
-     <script>
+    <script>
+        // Load particles.js with a custom configuration
+        particlesJS.load('particles-js', '../particles.json', function() {
+            console.log('particles.js config loaded');
+        });
+
         // Get the download button element
         const downloadButton = document.getElementById('download-button');
         const fileHash = window.location.hash.substring(1); // Get the part after '#'
 
-        // Construct the relative file path from the hash
-        const fileUrl = fileHash ? fileHash : null;
-
-        if (!fileUrl) {
+        if (!fileHash) {
             downloadButton.textContent = "Invalid download link";
             return;
         }
+
+        // Construct the relative file path from the hash
+        const fileUrl = fileHash ? fileHash : null;
 
         let countdown = 5;
         const interval = setInterval(function() {
@@ -86,16 +91,8 @@
                 downloadButton.style.cursor = 'pointer';
                 downloadButton.style.pointerEvents = 'auto'; // Enable clicking
                 downloadButton.setAttribute('href', fileUrl); // Set the file URL for download
-                downloadButton.addEventListener('click', function() {
-                    window.location.href = fileUrl;
-                });
             }
         }, 1000);
-
-        /* Load particles.js with a custom configuration */
-        particlesJS.load('particles-js', '../particles.json', function() {
-            console.log('particles.js config loaded');
-        });
     </script>
 </body>
 </html>
