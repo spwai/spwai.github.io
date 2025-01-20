@@ -64,27 +64,27 @@
     <a id="download-button" class="download-btn" href="#" style="pointer-events: none;">Download (5)</a>
 
     <script>
-        // Load particles.js with a custom configuration
+        // Ensure particles.js is loaded first and runs smoothly
         particlesJS.load('particles-js', '../particles.json', function() {
             console.log('particles.js config loaded');
         });
 
-        // Get the download button element
+        // Set up the download functionality
         const downloadButton = document.getElementById('download-button');
         const fileHash = window.location.hash.substring(1); // Get the part after '#'
 
         if (!fileHash) {
             downloadButton.textContent = "Invalid download link";
-            return;
+            return; // Stop if no valid hash is present
         }
 
-        // Construct the relative file path from the hash
-        const fileUrl = fileHash ? fileHash : null;
+        const fileUrl = fileHash; // Directly use the hash part as the file name (e.g., ffa.zip)
 
         let countdown = 5;
         const interval = setInterval(function() {
             downloadButton.textContent = `Download (${countdown})`;
             countdown--;
+
             if (countdown < 0) {
                 clearInterval(interval);
                 downloadButton.textContent = 'Click to Download';
