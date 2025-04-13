@@ -1,4 +1,4 @@
-# This file will get overwritten 
+# This file will be overwritten
 # modify enemies.txt instead
 sectorplays7
 erixxk yunxg

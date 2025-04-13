@@ -1,4 +1,4 @@
-# This file will get overwritten 
+# This file will be overwritten
 # modify friends.txt instead
 thatsheepdude
 milovesyoux
