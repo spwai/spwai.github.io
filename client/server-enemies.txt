@@ -1,4 +1,5 @@
-# Add one name per line lowercase only
+# This file will get overwritten 
+# modify enemies.txt instead
 sectorplays7
 erixxk yunxg
 lionheart4d

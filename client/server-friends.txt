@@ -1,4 +1,5 @@
-# Add one name per line lowercase only
+# This file will get overwritten 
+# modify friends.txt instead
 thatsheepdude
 milovesyoux
 cheats user
