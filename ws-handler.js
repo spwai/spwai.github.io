@@ -20,26 +20,28 @@ export function initWebSocket(graph, url = DEFAULT_WS_URL) {
 
             if (Array.isArray(data)) {
                 points = data.map(obj => {
-                    const { id, position, flags } = obj;
+                    const { id, position, head, flags } = obj;
                     let normFlag = 'undefined';
                     if (flags === 'worker') normFlag = 'worker';
                     else if (flags === 'target') normFlag = 'target';
                     else if (flags === 'default') normFlag = 'default';
                     return {
                         id: id,
-                        position: { x: position.x, z: position.z },
+                        position: { x: position.x, y: position.y, z: position.z },
+                        head: head ? { pitch: head.pitch, yaw: head.yaw } : { pitch: 0, yaw: 0 },
                         flags: normFlag
                     };
                 });
             } else {
-                const { id, position, flags } = data;
+                const { id, position, head, flags } = data;
                 let normFlag = 'undefined';
                 if (flags === 'worker') normFlag = 'worker';
                 else if (flags === 'target') normFlag = 'target';
                 else if (flags === 'default') normFlag = 'default';
                 points = [{
                     id: id,
-                    position: { x: position.x, z: position.z },
+                    position: { x: position.x, y: position.y, z: position.z },
+                    head: head ? { pitch: head.pitch, yaw: head.yaw } : { pitch: 0, yaw: 0 },
                     flags: normFlag
                 }];
             }

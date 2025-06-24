@@ -40,6 +40,9 @@ class HierarchicalGraph {
         this.mouseX = 0;
         this.mouseY = 0;
         this.lastMouseEvent = null;
+        this.lastTouchDistance = 0;
+        this.selectedPointId = null;
+        this.iconClickRadius = 16; // px, clickable area radius
         this.setupCanvas();
         this.setupControls();
         window.addEventListener('resize', () => this.resize());
@@ -48,6 +51,10 @@ class HierarchicalGraph {
         this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e));
         window.addEventListener('mouseup', (e) => this.handleMouseUp(e));
         this.canvas.addEventListener('wheel', (e) => this.handleWheel(e), { passive: false });
+        this.canvas.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
+        this.canvas.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
+        this.canvas.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: false });
+        this.canvas.addEventListener('click', (e) => this.handleIconClick(e));
         this.resize();
         this.animate();
     }
@@ -59,7 +66,6 @@ class HierarchicalGraph {
     }
 
     setupControls() {
-
         ['teleport-btn', 'focus-prev-btn', 'focus-next-btn'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.remove();
@@ -74,7 +80,9 @@ class HierarchicalGraph {
             btnGroup.style.left = '16px';
             btnGroup.style.zIndex = 2000;
             btnGroup.style.display = 'flex';
-            btnGroup.style.gap = '6px';
+            btnGroup.style.gap = '8px';
+            btnGroup.style.transform = 'scale(1)';
+            btnGroup.style.transformOrigin = 'left top';
             document.body.appendChild(btnGroup);
         }
 
@@ -85,10 +93,13 @@ class HierarchicalGraph {
         centerBtn.style.color = '#fff';
         centerBtn.style.border = '1px solid #30363d';
         centerBtn.style.borderRadius = '6px';
-        centerBtn.style.padding = '6px 12px';
+        centerBtn.style.padding = '8px 16px';
         centerBtn.style.cursor = 'pointer';
         centerBtn.style.fontSize = '14px';
         centerBtn.style.userSelect = 'none';
+        centerBtn.style.minWidth = '100px';
+        centerBtn.style.height = '36px';
+        centerBtn.style.touchAction = 'manipulation';
         centerBtn.onclick = () => {
             this.focusedIdx = -1;
             this.centerView();
@@ -103,12 +114,15 @@ class HierarchicalGraph {
         prevBtn.style.color = '#fff';
         prevBtn.style.border = '1px solid #30363d';
         prevBtn.style.borderRadius = '6px';
-        prevBtn.style.padding = '6px';
+        prevBtn.style.width = '36px';
+        prevBtn.style.height = '36px';
         prevBtn.style.cursor = 'pointer';
         prevBtn.style.fontSize = '14px';
         prevBtn.style.userSelect = 'none';
         prevBtn.style.display = 'flex';
         prevBtn.style.alignItems = 'center';
+        prevBtn.style.justifyContent = 'center';
+        prevBtn.style.touchAction = 'manipulation';
         prevBtn.onclick = () => this.focusPrev();
         btnGroup.appendChild(prevBtn);
 
@@ -119,12 +133,15 @@ class HierarchicalGraph {
         nextBtn.style.color = '#fff';
         nextBtn.style.border = '1px solid #30363d';
         nextBtn.style.borderRadius = '6px';
-        nextBtn.style.padding = '6px';
+        nextBtn.style.width = '36px';
+        nextBtn.style.height = '36px';
         nextBtn.style.cursor = 'pointer';
         nextBtn.style.fontSize = '14px';
         nextBtn.style.userSelect = 'none';
         nextBtn.style.display = 'flex';
         nextBtn.style.alignItems = 'center';
+        nextBtn.style.justifyContent = 'center';
+        nextBtn.style.touchAction = 'manipulation';
         nextBtn.onclick = () => this.focusNext();
         btnGroup.appendChild(nextBtn);
         this.updateFocusBtns();
@@ -149,6 +166,11 @@ class HierarchicalGraph {
         this.trackingFocused = true;
         this.centerOnFocused();
         this.updateFocusBtns();
+        const p = this.focusedList[this.focusedIdx];
+        if (p) {
+            this.selectedPointId = p.id;
+            this.showInfoPopup(p);
+        }
     }
 
     focusNext() {
@@ -159,6 +181,11 @@ class HierarchicalGraph {
         this.trackingFocused = true;
         this.centerOnFocused();
         this.updateFocusBtns();
+        const p = this.focusedList[this.focusedIdx];
+        if (p) {
+            this.selectedPointId = p.id;
+            this.showInfoPopup(p);
+        }
     }
 
     centerOnFocused() {
@@ -201,12 +228,6 @@ class HierarchicalGraph {
         this.hideCoordPopup();
         this.hoverBlock = null;
         this.lastMouseEvent = null;
-        if (this.trackingFocused) {
-            this.targetOffsetX = this.offsetX;
-            this.targetOffsetY = this.offsetY;
-            this.targetScale = this.scale;
-            this.trackingFocused = false;
-        }
     }
 
     handleMouseUp(e) {
@@ -217,6 +238,14 @@ class HierarchicalGraph {
         if (this.isDragging) {
             const dx = (e.clientX - this.lastDragX) / this.scale;
             const dz = (e.clientY - this.lastDragY) / this.scale;
+            if (Math.abs(dx) > 0.5 || Math.abs(dz) > 0.5) {
+                if (this.trackingFocused) {
+                    this.targetOffsetX = this.offsetX;
+                    this.targetOffsetY = this.offsetY;
+                    this.targetScale = this.scale;
+                    this.trackingFocused = false;
+                }
+            }
             this.offsetX += dx;
             this.offsetY += dz;
             this.lastDragX = e.clientX;
@@ -260,8 +289,8 @@ class HierarchicalGraph {
         const chunkZ = Math.floor(z / 16);
         popup.innerHTML = `Block (<b>${x}</b>, <b>${z}</b>)<br>Chunk (<b>${chunkX}</b>, <b>${chunkZ}</b>)`;
 
-        const mouseX = this.lastMouseEvent.clientX;
-        const mouseY = this.lastMouseEvent.clientY;
+        let mouseX = this.lastMouseEvent.clientX;
+        let mouseY = this.lastMouseEvent.clientY;
         popup.style.left = `${mouseX + 20}px`;
         popup.style.top = `${mouseY + 20}px`;
         popup.style.display = 'block';
@@ -270,11 +299,49 @@ class HierarchicalGraph {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
 
+        // Window edge collision
         if (popupRect.right > viewportWidth) {
             popup.style.left = `${viewportWidth - popupRect.width - 10}px`;
         }
         if (popupRect.bottom > viewportHeight) {
             popup.style.top = `${viewportHeight - popupRect.height - 10}px`;
+        }
+
+        // Panel collision (legend and info popup)
+        const legend = document.querySelector('.legend');
+        const infoPopup = document.getElementById('icon-info-popup');
+        const checkCollision = (rect1, rect2) => {
+            return rect1.left < rect2.right &&
+                rect1.right > rect2.left &&
+                rect1.top < rect2.bottom &&
+                rect1.bottom > rect2.top;
+        };
+        // Recalculate after window edge adjustment
+        let newRect = popup.getBoundingClientRect();
+        if (legend) {
+            const legendRect = legend.getBoundingClientRect();
+            if (checkCollision(newRect, legendRect)) {
+                // Try to move popup above the legend
+                popup.style.top = `${legendRect.top - newRect.height - 8}px`;
+                newRect = popup.getBoundingClientRect();
+                // If still colliding, move to the left of the legend
+                if (checkCollision(newRect, legendRect)) {
+                    popup.style.left = `${legendRect.left - newRect.width - 8}px`;
+                }
+            }
+        }
+        if (infoPopup) {
+            const infoRect = infoPopup.getBoundingClientRect();
+            newRect = popup.getBoundingClientRect();
+            if (checkCollision(newRect, infoRect)) {
+                // Try to move popup above the info popup
+                popup.style.top = `${infoRect.top - newRect.height - 8}px`;
+                newRect = popup.getBoundingClientRect();
+                // If still colliding, move to the left of the info popup
+                if (checkCollision(newRect, infoRect)) {
+                    popup.style.left = `${infoRect.left - newRect.width - 8}px`;
+                }
+            }
         }
     }
 
@@ -305,6 +372,220 @@ class HierarchicalGraph {
         }
 
         this.render();
+    }
+
+    handleTouchStart(e) {
+        e.preventDefault();
+        this.isDragging = true;
+        if (e.touches.length === 1) {
+            this.lastDragX = e.touches[0].clientX;
+            this.lastDragY = e.touches[0].clientY;
+            const rect = this.canvas.getBoundingClientRect();
+            const touchX = e.touches[0].clientX - rect.left;
+            const touchY = e.touches[0].clientY - rect.top;
+            let found = null;
+            for (const point of this.displayData) {
+                const screenX = (point.position.x + this.offsetX) * this.scale;
+                const screenY = (-point.position.z + this.offsetY) * this.scale;
+                const dx = touchX - screenX;
+                const dy = touchY - screenY;
+                if (Math.sqrt(dx * dx + dy * dy) <= this.iconClickRadius) {
+                    found = point;
+                    break;
+                }
+            }
+            if (found) {
+                if (this.selectedPointId === found.id) {
+                    this.selectedPointId = null;
+                    this.hideInfoPopup();
+                } else {
+                    this.selectedPointId = found.id;
+                    this.showInfoPopup(found);
+                }
+            }
+        } else if (e.touches.length === 2) {
+            const touch1 = e.touches[0];
+            const touch2 = e.touches[1];
+            this.lastTouchDistance = Math.hypot(
+                touch2.clientX - touch1.clientX,
+                touch2.clientY - touch1.clientY
+            );
+        }
+    }
+
+    handleTouchMove(e) {
+        e.preventDefault();
+        if (!this.isDragging) return;
+
+        if (e.touches.length === 1) {
+            const touch = e.touches[0];
+            const dx = (touch.clientX - this.lastDragX) / this.scale;
+            const dz = (touch.clientY - this.lastDragY) / this.scale;
+            if (Math.abs(dx) > 0.5 || Math.abs(dz) > 0.5) {
+                if (this.trackingFocused) {
+                    this.targetOffsetX = this.offsetX;
+                    this.targetOffsetY = this.offsetY;
+                    this.targetScale = this.scale;
+                    this.trackingFocused = false;
+                }
+            }
+            this.offsetX += dx;
+            this.offsetY += dz;
+            this.lastDragX = touch.clientX;
+            this.lastDragY = touch.clientY;
+        } else if (e.touches.length === 2) {
+            const touch1 = e.touches[0];
+            const touch2 = e.touches[1];
+            const currentDistance = Math.hypot(
+                touch2.clientX - touch1.clientX,
+                touch2.clientY - touch1.clientY
+            );
+
+            if (this.lastTouchDistance) {
+                const scaleFactor = currentDistance / this.lastTouchDistance;
+                const centerX = (touch1.clientX + touch2.clientX) / 2;
+                const centerY = (touch1.clientY + touch2.clientY) / 2;
+                const rect = this.canvas.getBoundingClientRect();
+                const worldX = (centerX - rect.left) / this.scale - this.offsetX;
+                const worldZ = -((centerY - rect.top) / this.scale - this.offsetY);
+
+                this.targetScale *= scaleFactor;
+                if (!this.trackingFocused) {
+                    this.scale = this.targetScale;
+                    this.offsetX = ((centerX - rect.left) / this.scale) - worldX;
+                    this.offsetY = ((centerY - rect.top) / this.scale) + worldZ;
+                }
+            }
+            this.lastTouchDistance = currentDistance;
+        }
+        this.render();
+    }
+
+    handleTouchEnd(e) {
+        this.isDragging = false;
+        this.lastTouchDistance = 0;
+    }
+
+    handleIconClick(e) {
+        const rect = this.canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        let found = null;
+        for (const point of this.displayData) {
+            const screenX = (point.position.x + this.offsetX) * this.scale;
+            const screenY = (-point.position.z + this.offsetY) * this.scale;
+            const dx = mouseX - screenX;
+            const dy = mouseY - screenY;
+            if (Math.sqrt(dx * dx + dy * dy) <= this.iconClickRadius) {
+                found = point;
+                break;
+            }
+        }
+        if (found) {
+            if (this.selectedPointId === found.id) {
+                this.selectedPointId = null;
+                this.hideInfoPopup();
+            } else {
+                this.selectedPointId = found.id;
+                this.showInfoPopup(found);
+            }
+        }
+    }
+
+    showInfoPopup(point) {
+        let popup = document.getElementById('icon-info-popup');
+        if (!popup) {
+            popup = document.createElement('div');
+            popup.id = 'icon-info-popup';
+            popup.style.position = 'fixed';
+            popup.style.background = '#161b22';
+            popup.style.color = '#fff';
+            popup.style.fontSize = 'min(13px, 3.5vw)';
+            popup.style.fontFamily = `-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif`;
+            popup.style.padding = '12px 8px 12px 8px';
+            popup.style.borderRadius = '8px';
+            popup.style.border = '1px solid #30363d';
+            popup.style.zIndex = 10001;
+            popup.style.pointerEvents = 'auto';
+            popup.style.whiteSpace = 'normal';
+            popup.style.display = 'block';
+            popup.style.overflow = 'hidden';
+            popup.style.fontWeight = '300';
+            popup.style.textAlign = 'left';
+            popup.style.wordBreak = 'break-word';
+        }
+        const legend = document.querySelector('.legend');
+        if (legend) {
+            popup.style.width = getComputedStyle(legend).width;
+        } else {
+            popup.style.width = '200px';
+        }
+        const fmt = v => (v === undefined || v === null || isNaN(v) ? '?' : Math.round(v));
+        const isMobile = window.innerWidth <= 768;
+        let headContent = '';
+        if (isMobile) {
+            headContent = `<b>Head:</b> <b>${fmt(point.head?.pitch)}</b>, <b>${fmt(point.head?.yaw)}</b>`;
+        } else {
+            headContent = `<b>Head:</b> pitch: <b>${fmt(point.head?.pitch)}</b>, yaw: <b>${fmt(point.head?.yaw)}</b>`;
+        }
+        let xyzContent = '';
+        if (isMobile) {
+            xyzContent = `<b>${fmt(point.position.x)}</b>, <b>${fmt(point.position.y)}</b>, <b>${fmt(point.position.z)}</b>`;
+        } else {
+            xyzContent = `<b>XYZ:</b> <b>${fmt(point.position.x)}</b>, <b>${fmt(point.position.y)}</b>, <b>${fmt(point.position.z)}</b>`;
+        }
+        popup.innerHTML = `<b>ID:</b> ${point.id}<br>
+            ${xyzContent}<br>
+            ${headContent}<br>
+            <b>Flags:</b> <b>${point.flags}</b>`;
+        const legendRect = legend ? legend.getBoundingClientRect() : { top: window.innerHeight - 100, left: window.innerWidth - 220, width: 200 };
+        const popupHeight = 90;
+        popup.style.left = `${legendRect.left}px`;
+        popup.style.top = `${legendRect.top - popupHeight - 12}px`;
+        document.body.appendChild(popup);
+    }
+
+    hideInfoPopup() {
+        const popup = document.getElementById('icon-info-popup');
+        if (popup) popup.remove();
+    }
+
+    updateInfoPopup() {
+        if (!this.selectedPointId) return;
+        const point = this.displayData.find(p => p.id === this.selectedPointId);
+        if (!point) {
+            this.hideInfoPopup();
+            this.selectedPointId = null;
+            return;
+        }
+        let popup = document.getElementById('icon-info-popup');
+        if (!popup) return;
+        const legend = document.querySelector('.legend');
+        if (legend) {
+            popup.style.width = getComputedStyle(legend).width;
+        }
+        const fmt = v => (v === undefined || v === null || isNaN(v) ? '?' : Math.round(v));
+        const isMobile = window.innerWidth <= 768;
+        let headContent = '';
+        if (isMobile) {
+            headContent = `<b>Head:</b> <b>${fmt(point.head?.pitch)}</b>, <b>${fmt(point.head?.yaw)}</b>`;
+        } else {
+            headContent = `<b>Head:</b> pitch: <b>${fmt(point.head?.pitch)}</b>, yaw: <b>${fmt(point.head?.yaw)}</b>`;
+        }
+        let xyzContent = '';
+        if (isMobile) {
+            xyzContent = `<b>${fmt(point.position.x)}</b>, <b>${fmt(point.position.y)}</b>, <b>${fmt(point.position.z)}</b>`;
+        } else {
+            xyzContent = `<b>XYZ:</b> <b>${fmt(point.position.x)}</b>, <b>${fmt(point.position.y)}</b>, <b>${fmt(point.position.z)}</b>`;
+        }
+        popup.innerHTML = `<b>ID:</b> ${point.id}<br>
+            ${xyzContent}<br>
+            ${headContent}<br>
+            <b>Flags:</b> <b>${point.flags}</b>`;
+        const legendRect = legend ? legend.getBoundingClientRect() : { top: window.innerHeight - 100, left: window.innerWidth - 220, width: 200 };
+        const popupHeight = 90;
+        popup.style.left = `${legendRect.left}px`;
+        popup.style.top = `${legendRect.top - popupHeight - 12}px`;
     }
 
     resize() {
@@ -385,6 +666,7 @@ class HierarchicalGraph {
         this.drawGrid(visibleLeft, visibleRight, visibleTop, visibleBottom);
         this.drawPoints();
         this.drawHoverBlock();
+        this.updateInfoPopup();
     }
 
     drawHoverBlock() {
@@ -534,6 +816,19 @@ class HierarchicalGraph {
                 color = this.colors.worker;
             } else if (point.flags === 'default') {
                 color = this.colors.default;
+            }
+
+            if (this.selectedPointId === point.id) {
+                this.ctx.save();
+                this.ctx.shadowColor = color;
+                this.ctx.shadowBlur = 10;
+                this.ctx.globalAlpha = 0.7;
+                this.ctx.beginPath();
+                this.ctx.arc(screenX, screenY, 7, 0, Math.PI * 2);
+                this.ctx.strokeStyle = color;
+                this.ctx.lineWidth = 2.5;
+                this.ctx.stroke();
+                this.ctx.restore();
             }
 
             this.ctx.fillStyle = color;

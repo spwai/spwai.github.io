@@ -6,6 +6,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
     <title>xmm0</title>
+    <link rel="icon" type="image/png" href="assets/icon.png">
     <style>
         * {
             margin: 0;
@@ -204,8 +205,28 @@
             .legend {
                 bottom: 8px;
                 right: 8px;
-                padding: 12px;
-                min-width: 160px;
+                padding: 8px;
+                min-width: 120px;
+                font-size: 11px;
+            }
+
+            .legend h3 {
+                font-size: 12px;
+                margin-bottom: 8px;
+            }
+
+            .legend-item {
+                margin-bottom: 4px;
+                gap: 6px;
+            }
+
+            .legend-dot {
+                width: 8px;
+                height: 8px;
+            }
+
+            #coord-popup {
+                display: none !important;
             }
         }
     </style>
