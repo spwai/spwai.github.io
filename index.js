@@ -42,10 +42,19 @@ class HierarchicalGraph {
         this.lastMouseEvent = null;
         this.lastTouchDistance = 0;
         this.selectedPointId = null;
-        this.iconClickRadius = 16; // px, clickable area radius
+        this.selectedPoints = new Set();
+        this.iconClickRadius = 16;
+        this.lastDataTime = 0;
+        this.dataTimeout = 5000;
+        this.isSelecting = false;
+        this.selectionStart = { x: 0, y: 0 };
+        this.selectionEnd = { x: 0, y: 0 };
+        this.infoPanels = new Map();
+        this.isMobile = window.innerWidth <= 768;
         this.setupCanvas();
         this.setupControls();
         window.addEventListener('resize', () => this.resize());
+        window.addEventListener('resize', () => this.updateMobileState());
         this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
         this.canvas.addEventListener('mouseleave', () => this.handleMouseLeave());
         this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e));
@@ -145,6 +154,57 @@ class HierarchicalGraph {
         nextBtn.onclick = () => this.focusNext();
         btnGroup.appendChild(nextBtn);
         this.updateFocusBtns();
+        this.setupLegendToggle();
+    }
+
+    setupLegendToggle() {
+        const toggleBtn = document.getElementById('legend-toggle');
+        const legendContent = document.getElementById('legend-content');
+        const legend = document.querySelector('.legend');
+        const controlsPC = document.getElementById('legend-controls-pc');
+        const controlsMobile = document.getElementById('legend-controls-mobile');
+
+        if (toggleBtn && legendContent && legend) {
+            const isMobile = window.innerWidth <= 768;
+            if (controlsPC && controlsMobile) {
+                controlsPC.style.display = isMobile ? 'none' : 'block';
+                controlsMobile.style.display = isMobile ? 'block' : 'none';
+            }
+            window.addEventListener('resize', () => {
+                const isMobileNow = window.innerWidth <= 768;
+                if (controlsPC && controlsMobile) {
+                    controlsPC.style.display = isMobileNow ? 'none' : 'block';
+                    controlsMobile.style.display = isMobileNow ? 'block' : 'none';
+                }
+            });
+            toggleBtn.addEventListener('mouseenter', () => {
+                toggleBtn.style.background = '#30363d';
+                toggleBtn.style.borderColor = '#8b949e';
+            });
+
+            toggleBtn.addEventListener('mouseleave', () => {
+                toggleBtn.style.background = '#21262d';
+                toggleBtn.style.borderColor = '#30363d';
+            });
+
+            toggleBtn.onclick = () => {
+                const isCollapsed = legend.classList.contains('legend-collapsed');
+                if (isCollapsed) {
+                    legend.classList.remove('legend-collapsed');
+                    legendContent.style.maxHeight = 'none';
+                    legendContent.style.overflow = 'visible';
+                    toggleBtn.classList.remove('collapsed');
+                } else {
+                    legend.classList.add('legend-collapsed');
+                    legendContent.style.maxHeight = '0px';
+                    legendContent.style.overflow = 'hidden';
+                    toggleBtn.classList.add('collapsed');
+                }
+                setTimeout(() => {
+                    this.updateInfoPanelPositions();
+                }, 10);
+            };
+        }
     }
 
     updateFocusBtns() {
@@ -222,16 +282,37 @@ class HierarchicalGraph {
     }
 
     handleMouseDown(e) {
-        this.isDragging = true;
-        this.lastDragX = e.clientX;
-        this.lastDragY = e.clientY;
-        this.hideCoordPopup();
-        this.hoverBlock = null;
-        this.lastMouseEvent = null;
+        if (e.button === 1 || e.button === 2) {
+            this.isDragging = true;
+            this.lastDragX = e.clientX;
+            this.lastDragY = e.clientY;
+            this.hideCoordPopup();
+            this.hoverBlock = null;
+            this.lastMouseEvent = null;
+            if (this.trackingFocused) {
+                this.targetOffsetX = this.offsetX;
+                this.targetOffsetY = this.offsetY;
+                this.targetScale = this.scale;
+                this.trackingFocused = false;
+            }
+        } else if (e.button === 0 && !this.isMobile) {
+            this.isSelecting = true;
+            const rect = this.canvas.getBoundingClientRect();
+            this.selectionStart = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+            this.selectionEnd = { ...this.selectionStart };
+        }
     }
 
     handleMouseUp(e) {
-        this.isDragging = false;
+        if (e.button === 1 || e.button === 2) {
+            this.isDragging = false;
+        } else if (e.button === 0 && this.isSelecting && !this.isMobile) {
+            this.isSelecting = false;
+            this.finalizeSelection();
+        }
     }
 
     handleMouseMove(e) {
@@ -252,6 +333,14 @@ class HierarchicalGraph {
             this.lastDragY = e.clientY;
             this.render();
             return;
+        }
+        if (this.isSelecting && !this.isMobile) {
+            const rect = this.canvas.getBoundingClientRect();
+            this.selectionEnd = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+            this.render();
         }
         this.lastMouseEvent = e;
         this.mouseX = e.clientX - this.canvas.getBoundingClientRect().left;
@@ -299,7 +388,6 @@ class HierarchicalGraph {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
 
-        // Window edge collision
         if (popupRect.right > viewportWidth) {
             popup.style.left = `${viewportWidth - popupRect.width - 10}px`;
         }
@@ -307,7 +395,6 @@ class HierarchicalGraph {
             popup.style.top = `${viewportHeight - popupRect.height - 10}px`;
         }
 
-        // Panel collision (legend and info popup)
         const legend = document.querySelector('.legend');
         const infoPopup = document.getElementById('icon-info-popup');
         const checkCollision = (rect1, rect2) => {
@@ -316,15 +403,12 @@ class HierarchicalGraph {
                 rect1.top < rect2.bottom &&
                 rect1.bottom > rect2.top;
         };
-        // Recalculate after window edge adjustment
         let newRect = popup.getBoundingClientRect();
         if (legend) {
             const legendRect = legend.getBoundingClientRect();
             if (checkCollision(newRect, legendRect)) {
-                // Try to move popup above the legend
                 popup.style.top = `${legendRect.top - newRect.height - 8}px`;
                 newRect = popup.getBoundingClientRect();
-                // If still colliding, move to the left of the legend
                 if (checkCollision(newRect, legendRect)) {
                     popup.style.left = `${legendRect.left - newRect.width - 8}px`;
                 }
@@ -334,10 +418,8 @@ class HierarchicalGraph {
             const infoRect = infoPopup.getBoundingClientRect();
             newRect = popup.getBoundingClientRect();
             if (checkCollision(newRect, infoRect)) {
-                // Try to move popup above the info popup
                 popup.style.top = `${infoRect.top - newRect.height - 8}px`;
                 newRect = popup.getBoundingClientRect();
-                // If still colliding, move to the left of the info popup
                 if (checkCollision(newRect, infoRect)) {
                     popup.style.left = `${infoRect.left - newRect.width - 8}px`;
                 }
@@ -467,6 +549,11 @@ class HierarchicalGraph {
     }
 
     handleIconClick(e) {
+        if ((e.ctrlKey || e.metaKey) && !this.isMobile) {
+            this.handleMultiSelection(e);
+            return;
+        }
+
         const rect = this.canvas.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
@@ -484,19 +571,98 @@ class HierarchicalGraph {
         if (found) {
             if (this.selectedPointId === found.id) {
                 this.selectedPointId = null;
-                this.hideInfoPopup();
+                this.selectedPoints.clear();
+                this.clearAllInfoPanels();
             } else {
+                this.selectedPointId = found.id;
+                this.selectedPoints.clear();
+                this.selectedPoints.add(found.id);
+                this.clearAllInfoPanels();
+                this.showInfoPopup(found);
+            }
+        }
+    }
+
+    handleMultiSelection(e) {
+        const rect = this.canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        let found = null;
+        for (const point of this.displayData) {
+            const screenX = (point.position.x + this.offsetX) * this.scale;
+            const screenY = (-point.position.z + this.offsetY) * this.scale;
+            const dx = mouseX - screenX;
+            const dy = mouseY - screenY;
+            if (Math.sqrt(dx * dx + dy * dy) <= this.iconClickRadius) {
+                found = point;
+                break;
+            }
+        }
+        if (found) {
+            if (this.selectedPoints.has(found.id)) {
+                this.selectedPoints.delete(found.id);
+                this.removeInfoPanel(found.id);
+                if (this.selectedPoints.size > 0) {
+                    this.selectedPointId = Array.from(this.selectedPoints)[0];
+                } else {
+                    this.selectedPointId = null;
+                }
+            } else {
+                this.selectedPoints.add(found.id);
                 this.selectedPointId = found.id;
                 this.showInfoPopup(found);
             }
         }
     }
 
+    finalizeSelection() {
+        const startX = Math.min(this.selectionStart.x, this.selectionEnd.x);
+        const endX = Math.max(this.selectionStart.x, this.selectionEnd.x);
+        const startY = Math.min(this.selectionStart.y, this.selectionEnd.y);
+        const endY = Math.max(this.selectionStart.y, this.selectionEnd.y);
+
+        const selectionWidth = endX - startX;
+        const selectionHeight = endY - startY;
+        const minSelectionSize = 10;
+
+        if (selectionWidth < minSelectionSize && selectionHeight < minSelectionSize) {
+            this.isSelecting = false;
+            return;
+        }
+
+        this.selectedPoints.clear();
+        this.clearAllInfoPanels();
+
+        for (const point of this.displayData) {
+            const screenX = (point.position.x + this.offsetX) * this.scale;
+            const screenY = (-point.position.z + this.offsetY) * this.scale;
+
+            if (screenX >= startX && screenX <= endX && screenY >= startY && screenY <= endY) {
+                this.selectedPoints.add(point.id);
+            }
+        }
+
+        if (this.selectedPoints.size > 0) {
+            this.selectedPoints.forEach(pointId => {
+                const point = this.displayData.find(p => p.id === pointId);
+                if (point) {
+                    this.showInfoPopup(point);
+                }
+            });
+            this.selectedPointId = Array.from(this.selectedPoints)[0];
+        }
+    }
+
     showInfoPopup(point) {
-        let popup = document.getElementById('icon-info-popup');
+        if (this.isMobile) {
+            this.clearAllInfoPanels();
+            this.selectedPoints.clear();
+            this.selectedPoints.add(point.id);
+        }
+        let popup = document.getElementById(`icon-info-popup-${point.id}`);
         if (!popup) {
             popup = document.createElement('div');
-            popup.id = 'icon-info-popup';
+            popup.id = `icon-info-popup-${point.id}`;
             popup.style.position = 'fixed';
             popup.style.background = '#161b22';
             popup.style.color = '#fff';
@@ -513,13 +679,18 @@ class HierarchicalGraph {
             popup.style.fontWeight = '300';
             popup.style.textAlign = 'left';
             popup.style.wordBreak = 'break-word';
+            popup.style.maxWidth = '200px';
+            popup.style.minWidth = '150px';
+            popup.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
         }
+
         const legend = document.querySelector('.legend');
         if (legend) {
             popup.style.width = getComputedStyle(legend).width;
         } else {
             popup.style.width = '200px';
         }
+
         const fmt = v => (v === undefined || v === null || isNaN(v) ? '?' : Math.round(v));
         const isMobile = window.innerWidth <= 768;
         let headContent = '';
@@ -538,54 +709,90 @@ class HierarchicalGraph {
             ${xyzContent}<br>
             ${headContent}<br>
             <b>Flags:</b> <b>${point.flags}</b>`;
-        const legendRect = legend ? legend.getBoundingClientRect() : { top: window.innerHeight - 100, left: window.innerWidth - 220, width: 200 };
-        const popupHeight = 90;
-        popup.style.left = `${legendRect.left}px`;
-        popup.style.top = `${legendRect.top - popupHeight - 12}px`;
+
+        this.infoPanels.set(point.id, popup);
+        this.updateInfoPanelPositions();
         document.body.appendChild(popup);
     }
 
     hideInfoPopup() {
-        const popup = document.getElementById('icon-info-popup');
-        if (popup) popup.remove();
+        this.clearAllInfoPanels();
+    }
+
+    removeInfoPanel(pointId) {
+        const popup = document.getElementById(`icon-info-popup-${pointId}`);
+        if (popup) {
+            popup.remove();
+            this.infoPanels.delete(pointId);
+        }
+    }
+
+    clearAllInfoPanels() {
+        this.infoPanels.forEach((popup, id) => {
+            popup.remove();
+        });
+        this.infoPanels.clear();
+    }
+
+    updateInfoPanelPositions() {
+        const legend = document.querySelector('.legend');
+        if (!legend) return;
+
+        const legendRect = legend.getBoundingClientRect();
+        const panelWidth = getComputedStyle(legend).width;
+        const panelHeight = 90;
+        const spacing = 12;
+
+        let currentY = legendRect.top - panelHeight - 12;
+
+        this.infoPanels.forEach((popup, pointId) => {
+            popup.style.left = `${legendRect.left}px`;
+            popup.style.top = `${currentY}px`;
+            popup.style.width = panelWidth;
+
+            const popupRect = popup.getBoundingClientRect();
+            if (popupRect.top < 20) {
+                popup.style.top = '20px';
+            }
+
+            currentY -= (panelHeight + spacing);
+        });
     }
 
     updateInfoPopup() {
-        if (!this.selectedPointId) return;
-        const point = this.displayData.find(p => p.id === this.selectedPointId);
-        if (!point) {
-            this.hideInfoPopup();
-            this.selectedPointId = null;
-            return;
-        }
-        let popup = document.getElementById('icon-info-popup');
-        if (!popup) return;
-        const legend = document.querySelector('.legend');
-        if (legend) {
-            popup.style.width = getComputedStyle(legend).width;
-        }
-        const fmt = v => (v === undefined || v === null || isNaN(v) ? '?' : Math.round(v));
-        const isMobile = window.innerWidth <= 768;
-        let headContent = '';
-        if (isMobile) {
-            headContent = `<b>Head:</b> <b>${fmt(point.head?.pitch)}</b>, <b>${fmt(point.head?.yaw)}</b>`;
-        } else {
-            headContent = `<b>Head:</b> pitch: <b>${fmt(point.head?.pitch)}</b>, yaw: <b>${fmt(point.head?.yaw)}</b>`;
-        }
-        let xyzContent = '';
-        if (isMobile) {
-            xyzContent = `<b>${fmt(point.position.x)}</b>, <b>${fmt(point.position.y)}</b>, <b>${fmt(point.position.z)}</b>`;
-        } else {
-            xyzContent = `<b>XYZ:</b> <b>${fmt(point.position.x)}</b>, <b>${fmt(point.position.y)}</b>, <b>${fmt(point.position.z)}</b>`;
-        }
-        popup.innerHTML = `<b>ID:</b> ${point.id}<br>
-            ${xyzContent}<br>
-            ${headContent}<br>
-            <b>Flags:</b> <b>${point.flags}</b>`;
-        const legendRect = legend ? legend.getBoundingClientRect() : { top: window.innerHeight - 100, left: window.innerWidth - 220, width: 200 };
-        const popupHeight = 90;
-        popup.style.left = `${legendRect.left}px`;
-        popup.style.top = `${legendRect.top - popupHeight - 12}px`;
+        this.infoPanels.forEach((popup, pointId) => {
+            const point = this.displayData.find(p => p.id === pointId);
+            if (!point) {
+                this.removeInfoPanel(pointId);
+                return;
+            }
+
+            const legend = document.querySelector('.legend');
+            if (legend) {
+                popup.style.width = getComputedStyle(legend).width;
+            }
+
+            const fmt = v => (v === undefined || v === null || isNaN(v) ? '?' : Math.round(v));
+            const isMobile = window.innerWidth <= 768;
+            let headContent = '';
+            if (isMobile) {
+                headContent = `<b>Head:</b> <b>${fmt(point.head?.pitch)}</b>, <b>${fmt(point.head?.yaw)}</b>`;
+            } else {
+                headContent = `<b>Head:</b> pitch: <b>${fmt(point.head?.pitch)}</b>, yaw: <b>${fmt(point.head?.yaw)}</b>`;
+            }
+            let xyzContent = '';
+            if (isMobile) {
+                xyzContent = `<b>${fmt(point.position.x)}</b>, <b>${fmt(point.position.y)}</b>, <b>${fmt(point.position.z)}</b>`;
+            } else {
+                xyzContent = `<b>XYZ:</b> <b>${fmt(point.position.x)}</b>, <b>${fmt(point.position.y)}</b>, <b>${fmt(point.position.z)}</b>`;
+            }
+            popup.innerHTML = `<b>ID:</b> ${point.id}<br>
+                ${xyzContent}<br>
+                ${headContent}<br>
+                <b>Flags:</b> <b>${point.flags}</b>`;
+        });
+
+        this.updateInfoPanelPositions();
     }
 
     resize() {
@@ -599,6 +806,7 @@ class HierarchicalGraph {
 
     setData(data) {
         this.data = data.map(p => ({ ...p, position: { ...p.position } }));
+        this.lastDataTime = Date.now();
         if (!this.displayData.length) {
             this.displayData = this.data.map(p => ({ ...p, position: { ...p.position } }));
         }
@@ -613,6 +821,10 @@ class HierarchicalGraph {
     animate() {
         this.time += this.animationSpeed;
         this.smoothDisplayData();
+
+        if (this.lastDataTime && Date.now() - this.lastDataTime > this.dataTimeout) {
+            this.clearAllData();
+        }
 
         if (this.trackingFocused && this.focusedIdx !== -1 && this.focusedList.length) {
             const p = this.focusedList[this.focusedIdx];
@@ -649,7 +861,13 @@ class HierarchicalGraph {
                 disp.flags = newP.flags;
             }
         });
+        const removedIcons = this.displayData.filter(d => !this.data.find(n => n.id === d.id));
         this.displayData = this.displayData.filter(d => this.data.find(n => n.id === d.id));
+
+        if (this.selectedPointId && removedIcons.find(icon => icon.id === this.selectedPointId)) {
+            this.selectedPointId = null;
+            this.hideInfoPopup();
+        }
     }
 
     hideCoordPopup() {
@@ -666,6 +884,9 @@ class HierarchicalGraph {
         this.drawGrid(visibleLeft, visibleRight, visibleTop, visibleBottom);
         this.drawPoints();
         this.drawHoverBlock();
+        if (!this.isMobile) {
+            this.drawSelectionBox();
+        }
         this.updateInfoPopup();
     }
 
@@ -818,7 +1039,7 @@ class HierarchicalGraph {
                 color = this.colors.default;
             }
 
-            if (this.selectedPointId === point.id) {
+            if (this.selectedPoints.has(point.id) || this.selectedPointId === point.id) {
                 this.ctx.save();
                 this.ctx.shadowColor = color;
                 this.ctx.shadowBlur = 10;
@@ -842,11 +1063,49 @@ class HierarchicalGraph {
         });
     }
 
+    drawSelectionBox() {
+        if (!this.isSelecting || this.isMobile) return;
+
+        const startX = Math.min(this.selectionStart.x, this.selectionEnd.x);
+        const endX = Math.max(this.selectionStart.x, this.selectionEnd.x);
+        const startY = Math.min(this.selectionStart.y, this.selectionEnd.y);
+        const endY = Math.max(this.selectionStart.y, this.selectionEnd.y);
+
+        this.ctx.save();
+        this.ctx.strokeStyle = this.colors.highlight;
+        this.ctx.lineWidth = 2;
+        this.ctx.setLineDash([5, 5]);
+        this.ctx.globalAlpha = 0.8;
+
+        this.ctx.shadowColor = this.colors.highlight;
+        this.ctx.shadowBlur = 10;
+        this.ctx.strokeRect(startX, startY, endX - startX, endY - startY);
+
+        this.ctx.restore();
+    }
+
     destroy() {
         if (this.animationFrame) {
             cancelAnimationFrame(this.animationFrame);
         }
         this.canvas.remove();
+    }
+
+    clearAllData() {
+        this.data = [];
+        this.displayData = [];
+        this.selectedPointId = null;
+        this.selectedPoints.clear();
+        this.clearAllInfoPanels();
+        this.focusedIdx = -1;
+        this.trackingFocused = false;
+        this.focusedList = [];
+        this.updateFocusBtns();
+        this.lastDataTime = 0;
+    }
+
+    updateMobileState() {
+        this.isMobile = window.innerWidth <= 768;
     }
 }
 

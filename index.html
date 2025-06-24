@@ -229,28 +229,112 @@
                 display: none !important;
             }
         }
+
+        :root {
+            --legend-collapsed-height: 36px;
+        }
+
+        .legend-collapsed {
+            max-height: var(--legend-collapsed-height) !important;
+            overflow: hidden !important;
+            padding-bottom: 0 !important;
+            padding-top: 0 !important;
+        }
+
+        .legend-collapsed #legend-header {
+            min-height: var(--legend-collapsed-height) !important;
+            height: var(--legend-collapsed-height) !important;
+            margin-bottom: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+        }
+
+        .legend-collapsed #legend-header span {
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+        }
+
+        #legend-toggle {
+            width: 22px;
+            height: 22px;
+            min-width: 22px;
+            min-height: 22px;
+            max-width: 22px;
+            max-height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #8b949e;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            padding: 0;
+        }
+
+        #legend-toggle svg {
+            width: 14px;
+            height: 14px;
+            display: block;
+            transition: transform 0.2s;
+        }
+
+        #legend-toggle.collapsed svg {
+            transform: rotate(-90deg);
+        }
     </style>
 </head>
 
 <body>
     <div id="graph-container" class="graph-container"></div>
     <div class="legend">
-        <h3>Legend</h3>
-        <div class="legend-item">
-            <div class="legend-dot" style="background-color: #f54254;"></div>
-            <span>Target</span>
+        <div id="legend-header"
+            style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 0; min-height: var(--legend-collapsed-height); height: var(--legend-collapsed-height);">
+            <span
+                style="font-size: 18px; font-weight: 600; color: #f0f6fc; display: flex; align-items: center; height: 100%;">Legend</span>
+            <button id="legend-toggle"><svg viewBox="0 0 20 20" fill="none">
+                    <path d="M6 8l4 4 4-4" stroke="#8b949e" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg></button>
         </div>
-        <div class="legend-item">
-            <div class="legend-dot" style="background-color: #ffffff;"></div>
-            <span>Worker</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-dot" style="background-color: #161c26;"></div>
-            <span>Default</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-dot" style="background-color: #2f353d;"></div>
-            <span>Unspecified</span>
+        <div id="legend-content">
+            <div class="legend-item">
+                <div class="legend-dot" style="background-color: #f54254;"></div>
+                <span>Target</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background-color: #ffffff;"></div>
+                <span>Worker</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background-color: #161c26;"></div>
+                <span>Default</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background-color: #2f353d;"></div>
+                <span>Unspecified</span>
+            </div>
+            <div id="legend-controls-pc"
+                style="margin-top: 12px; padding-top: 8px; border-top: 1px solid #30363d; font-size: 11px; color: #8b949e;">
+                <div><b>Controls:</b></div>
+                <div>• Click: Select icon</div>
+                <div>• Ctrl+Click: Multi-select</div>
+                <div>• Drag: Selection box</div>
+                <div>• MMB/RMB: Pan view</div>
+                <div>• Scroll: Zoom</div>
+                <div>• ⟨ ⟩ : Navigate targets/workers</div>
+            </div>
+            <div id="legend-controls-mobile"
+                style="margin-top: 12px; padding-top: 8px; border-top: 1px solid #30363d; font-size: 11px; color: #8b949e; display: none;">
+                <div><b>Controls:</b></div>
+                <div>• Tap: Select icon</div>
+                <div>• Pinch: Zoom</div>
+                <div>• Drag: Pan view</div>
+                <div>• ⟨ ⟩ : Navigate targets/workers</div>
+            </div>
         </div>
     </div>
     <div class="loading" id="loading">
