@@ -1,0 +1,23 @@
+{
+  "name": "xmm0",
+  "version": "1.0.0",
+  "description": "spwai.github.io",
+  "main": "index.js",
+  "scripts": {
+    "start": "node -e \"console.log('Open index.html in your browser to view the visualization')\"",
+    "dev": "python -m http.server 8000 || python3 -m http.server 8000 || npx http-server -p 8000",
+    "build": "echo 'No build step required - static files ready for GitHub Pages'",
+    "test": "echo 'No tests specified'"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spwai/spwai.github.io.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+} 
