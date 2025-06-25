@@ -20,7 +20,7 @@ export function initWebSocket(graph, url = DEFAULT_WS_URL) {
 
             if (Array.isArray(data)) {
                 points = data.map(obj => {
-                    const { id, position, head, flags } = obj;
+                    const { id, position, head, flags, address } = obj;
                     let normFlag = 'undefined';
                     if (flags === 'worker') normFlag = 'worker';
                     else if (flags === 'target') normFlag = 'target';
@@ -29,11 +29,12 @@ export function initWebSocket(graph, url = DEFAULT_WS_URL) {
                         id: id,
                         position: { x: position.x, y: position.y, z: position.z },
                         head: head ? { pitch: head.pitch, yaw: head.yaw } : { pitch: 0, yaw: 0 },
-                        flags: normFlag
+                        flags: normFlag,
+                        address: address || 'unknown'
                     };
                 });
             } else {
-                const { id, position, head, flags } = data;
+                const { id, position, head, flags, address } = data;
                 let normFlag = 'undefined';
                 if (flags === 'worker') normFlag = 'worker';
                 else if (flags === 'target') normFlag = 'target';
@@ -42,11 +43,12 @@ export function initWebSocket(graph, url = DEFAULT_WS_URL) {
                     id: id,
                     position: { x: position.x, y: position.y, z: position.z },
                     head: head ? { pitch: head.pitch, yaw: head.yaw } : { pitch: 0, yaw: 0 },
-                    flags: normFlag
+                    flags: normFlag,
+                    address: address || 'unknown'
                 }];
             }
 
-            console.log('Received points:', points.length);
+            graph.lastDataTime = Date.now();
             graph.setData(points);
         } catch (e) {
             console.error('Invalid data from WebSocket:', e);
@@ -55,6 +57,9 @@ export function initWebSocket(graph, url = DEFAULT_WS_URL) {
 
     ws.onclose = () => {
         console.log('WebSocket disconnected.');
+        if (graph && typeof graph.clearAllData === 'function') {
+            graph.clearAllData();
+        }
     };
 
     ws.onerror = (err) => {

@@ -7,6 +7,8 @@ class HierarchicalGraph {
         this.ctx = this.canvas.getContext('2d');
         this.data = [];
         this.displayData = [];
+        this.allData = [];
+        this.currentAddress = 'all';
         this.scale = 1;
         this.offsetX = 0;
         this.offsetY = 0;
@@ -66,6 +68,17 @@ class HierarchicalGraph {
         this.canvas.addEventListener('click', (e) => this.handleIconClick(e));
         this.resize();
         this.animate();
+
+        // Address dropdown event listener
+        const dropdown = document.getElementById('address-dropdown');
+        if (dropdown) {
+            dropdown.addEventListener('change', (e) => {
+                this.currentAddress = e.target.value;
+                this.filterDataByAddress();
+                this.focusedList = (this.data || []).filter(p => p.flags === 'worker' || p.flags === 'target');
+                this.updateFocusBtns();
+            });
+        }
     }
 
     setupCanvas() {
@@ -226,6 +239,9 @@ class HierarchicalGraph {
         this.trackingFocused = true;
         this.centerOnFocused();
         this.updateFocusBtns();
+        this.selectedPointId = null;
+        this.selectedPoints.clear();
+        this.clearAllInfoPanels();
         const p = this.focusedList[this.focusedIdx];
         if (p) {
             this.selectedPointId = p.id;
@@ -241,6 +257,9 @@ class HierarchicalGraph {
         this.trackingFocused = true;
         this.centerOnFocused();
         this.updateFocusBtns();
+        this.selectedPointId = null;
+        this.selectedPoints.clear();
+        this.clearAllInfoPanels();
         const p = this.focusedList[this.focusedIdx];
         if (p) {
             this.selectedPointId = p.id;
@@ -805,17 +824,63 @@ class HierarchicalGraph {
     }
 
     setData(data) {
-        this.data = data.map(p => ({ ...p, position: { ...p.position } }));
-        this.lastDataTime = Date.now();
-        if (!this.displayData.length) {
-            this.displayData = this.data.map(p => ({ ...p, position: { ...p.position } }));
-        }
+        this.allData = data.map(p => ({ ...p, position: { ...p.position }, address: p.address }));
+        this.updateAddressDropdown();
+        this.filterDataByAddress();
         this.focusedList = (this.data || []).filter(p => p.flags === 'worker' || p.flags === 'target');
         if (this.focusedIdx >= this.focusedList.length) {
             this.focusedIdx = -1;
             this.trackingFocused = false;
         }
         this.updateFocusBtns();
+    }
+
+    filterDataByAddress() {
+        if (this.currentAddress === 'all') {
+            this.data = this.allData;
+        } else {
+            this.data = this.allData.filter(p => p.address === this.currentAddress);
+        }
+        if (!this.displayData.length) {
+            this.displayData = this.data.map(p => ({ ...p, position: { ...p.position } }));
+        }
+    }
+
+    updateAddressDropdown() {
+        const dropdown = document.getElementById('address-dropdown');
+        if (!dropdown) return;
+        dropdown.style.width = 'calc(100% - 2px)';
+        dropdown.style.height = '36px';
+        dropdown.style.background = '#21262d';
+        dropdown.style.color = '#fff';
+        dropdown.style.border = '1px solid #30363d';
+        dropdown.style.borderRadius = '6px';
+        dropdown.style.fontSize = '14px';
+        dropdown.style.padding = '0 32px 0 12px';
+        dropdown.style.boxSizing = 'border-box';
+        dropdown.style.appearance = 'none';
+        dropdown.style.webkitAppearance = 'none';
+        dropdown.style.mozAppearance = 'none';
+        dropdown.style.position = 'relative';
+        dropdown.style.margin = '0';
+        dropdown.style.display = 'block';
+        dropdown.style.outline = 'none';
+        dropdown.style.cursor = 'pointer';
+        dropdown.style.backgroundImage = 'url("data:image/svg+xml;utf8,<svg fill=\'%238b949e\' height=\'18\' viewBox=\'0 0 20 20\' width=\'18\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M6 8l4 4 4-4\' stroke=\'%238b949e\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/></svg>")';
+        dropdown.style.backgroundRepeat = 'no-repeat';
+        dropdown.style.backgroundPosition = 'right 10px center';
+        dropdown.style.backgroundSize = '18px 18px';
+
+        const addresses = Array.from(new Set(this.allData.map(p => p.address).filter(Boolean)));
+        const prev = dropdown.value;
+        dropdown.innerHTML = '<option value="all">All Worlds/Addresses</option>';
+        addresses.forEach(addr => {
+            const opt = document.createElement('option');
+            opt.value = addr;
+            opt.textContent = addr;
+            dropdown.appendChild(opt);
+        });
+        dropdown.value = addresses.includes(prev) ? prev : 'all';
     }
 
     animate() {
@@ -1102,6 +1167,11 @@ class HierarchicalGraph {
         this.focusedList = [];
         this.updateFocusBtns();
         this.lastDataTime = 0;
+        const dropdown = document.getElementById('address-dropdown');
+        if (dropdown) {
+            dropdown.innerHTML = '<option value="all">All Worlds/Addresses</option>';
+            dropdown.value = 'all';
+        }
     }
 
     updateMobileState() {
