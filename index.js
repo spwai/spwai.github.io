@@ -698,7 +698,7 @@ class HierarchicalGraph {
             popup.style.fontWeight = '300';
             popup.style.textAlign = 'left';
             popup.style.wordBreak = 'break-word';
-            popup.style.maxWidth = '200px';
+            popup.style.maxWidth = '260px';
             popup.style.minWidth = '150px';
             popup.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
         }
@@ -707,27 +707,32 @@ class HierarchicalGraph {
         if (legend) {
             popup.style.width = getComputedStyle(legend).width;
         } else {
-            popup.style.width = '200px';
+            popup.style.width = '260px';
         }
 
         const fmt = v => (v === undefined || v === null || isNaN(v) ? '?' : Math.round(v));
+        const fmtF = v => (v === undefined || v === null || isNaN(v) ? '?' : v.toFixed(2));
         const isMobile = window.innerWidth <= 768;
-        let headContent = '';
-        if (isMobile) {
-            headContent = `<b>Head:</b> <b>${fmt(point.head?.pitch)}</b>, <b>${fmt(point.head?.yaw)}</b>`;
-        } else {
-            headContent = `<b>Head:</b> pitch: <b>${fmt(point.head?.pitch)}</b>, yaw: <b>${fmt(point.head?.yaw)}</b>`;
-        }
-        let xyzContent = '';
-        if (isMobile) {
-            xyzContent = `<b>${fmt(point.position.x)}</b>, <b>${fmt(point.position.y)}</b>, <b>${fmt(point.position.z)}</b>`;
-        } else {
-            xyzContent = `<b>XYZ:</b> <b>${fmt(point.position.x)}</b>, <b>${fmt(point.position.y)}</b>, <b>${fmt(point.position.z)}</b>`;
-        }
-        popup.innerHTML = `<b>ID:</b> ${point.id}<br>
-            ${xyzContent}<br>
-            ${headContent}<br>
-            <b>Flags:</b> <b>${point.flags}</b>`;
+        const pos = point.position || {};
+        const vel = point.velocity || {};
+        const head = point.head || {};
+        const aabb = point.aabb || {};
+        const meta = point.metadata || {};
+        let metaHurtDir = meta['hurt-direction'] || {};
+        let metaHurtTime = meta['hurt-time'];
+        popup.innerHTML = `
+            <b>Name:</b> ${point.name || ''}<br>
+            <b>Type:</b> ${point.type || ''}<br>
+            <b>XYZ:</b> <b>${fmt(pos.x)}</b>, <b>${fmt(pos.y)}</b>, <b>${fmt(pos.z)}</b><br>
+            <b>Velocity:</b> <b>${fmtF(vel.x)}</b>, <b>${fmtF(vel.y)}</b>, <b>${fmtF(vel.z)}</b><br>
+            <b>Head:</b> <b>${fmt(head.pitch)}</b>, <b>${fmt(head.yaw)}</b>, <b>${fmt(head.head_yaw)}</b><br>
+            <b>AABB:</b><b>${aabb.height ?? '?'}</b>, <b>${aabb.width ?? '?'}</b>, <b>${aabb.scale ?? '?'}</b><br>
+            <b>Flags:</b> <b>${point.flags}</b><br>
+            <b>Address:</b> <b>${point.address}</b><br>
+            <b>ID:</b> <b>${point.id}</b><br>
+            <b>Hurt Time:</b> <b>${metaHurtTime ?? '?'}</b><br>
+            <b>Hurt Dir:</b> <b>${fmtF(metaHurtDir.x)}</b>, <b>${fmtF(metaHurtDir.y)}</b>, <b>${fmtF(metaHurtDir.z)}</b>
+        `;
 
         this.infoPanels.set(point.id, popup);
         this.updateInfoPanelPositions();
@@ -759,22 +764,25 @@ class HierarchicalGraph {
 
         const legendRect = legend.getBoundingClientRect();
         const panelWidth = getComputedStyle(legend).width;
-        const panelHeight = 90;
-        const spacing = 12;
+        const spacing = 10;
+        const scrollY = window.scrollY || window.pageYOffset;
 
-        let currentY = legendRect.top - panelHeight - 12;
+        let currentY = legendRect.top + scrollY - spacing;
 
-        this.infoPanels.forEach((popup, pointId) => {
+        const panels = Array.from(this.infoPanels.values()).reverse();
+        panels.forEach((popup, idx) => {
+            popup.style.position = 'absolute';
             popup.style.left = `${legendRect.left}px`;
-            popup.style.top = `${currentY}px`;
             popup.style.width = panelWidth;
-
-            const popupRect = popup.getBoundingClientRect();
-            if (popupRect.top < 20) {
-                popup.style.top = '20px';
+            popup.style.zIndex = 10001;
+            popup.style.top = '0px';
+            const panelHeight = popup.offsetHeight;
+            currentY -= panelHeight;
+            popup.style.top = `${currentY}px`;
+            if (parseInt(popup.style.top) < 25) {
+                popup.style.top = '25px';
             }
-
-            currentY -= (panelHeight + spacing);
+            currentY -= spacing;
         });
     }
 
@@ -792,23 +800,28 @@ class HierarchicalGraph {
             }
 
             const fmt = v => (v === undefined || v === null || isNaN(v) ? '?' : Math.round(v));
+            const fmtF = v => (v === undefined || v === null || isNaN(v) ? '?' : v.toFixed(2));
             const isMobile = window.innerWidth <= 768;
-            let headContent = '';
-            if (isMobile) {
-                headContent = `<b>Head:</b> <b>${fmt(point.head?.pitch)}</b>, <b>${fmt(point.head?.yaw)}</b>`;
-            } else {
-                headContent = `<b>Head:</b> pitch: <b>${fmt(point.head?.pitch)}</b>, yaw: <b>${fmt(point.head?.yaw)}</b>`;
-            }
-            let xyzContent = '';
-            if (isMobile) {
-                xyzContent = `<b>${fmt(point.position.x)}</b>, <b>${fmt(point.position.y)}</b>, <b>${fmt(point.position.z)}</b>`;
-            } else {
-                xyzContent = `<b>XYZ:</b> <b>${fmt(point.position.x)}</b>, <b>${fmt(point.position.y)}</b>, <b>${fmt(point.position.z)}</b>`;
-            }
-            popup.innerHTML = `<b>ID:</b> ${point.id}<br>
-                ${xyzContent}<br>
-                ${headContent}<br>
-                <b>Flags:</b> <b>${point.flags}</b>`;
+            const pos = point.position || {};
+            const vel = point.velocity || {};
+            const head = point.head || {};
+            const aabb = point.aabb || {};
+            const meta = point.metadata || {};
+            let metaHurtDir = meta['hurt-direction'] || {};
+            let metaHurtTime = meta['hurt-time'];
+            popup.innerHTML = `
+                <b>Name:</b> ${point.name || ''}<br>
+                <b>Type:</b> ${point.type || ''}<br>
+                <b>XYZ:</b> <b>${fmt(pos.x)}</b>, <b>${fmt(pos.y)}</b>, <b>${fmt(pos.z)}</b><br>
+                <b>Velocity:</b> <b>${fmtF(vel.x)}</b>, <b>${fmtF(vel.y)}</b>, <b>${fmtF(vel.z)}</b><br>
+                <b>Head:</b> <b>${fmt(head.pitch)}</b>, <b>${fmt(head.yaw)}</b>, <b>${fmt(head.head_yaw)}</b><br>
+                <b>AABB:</b><b>${aabb.height ?? '?'}</b>, <b>${aabb.width ?? '?'}</b>, <b>${aabb.scale ?? '?'}</b><br>
+                <b>Flags:</b> <b>${point.flags}</b><br>
+                <b>Address:</b> <b>${point.address}</b><br>
+                <b>ID:</b> <b>${point.id}</b><br>
+                <b>Hurt Time:</b> <b>${metaHurtTime ?? '?'}</b><br>
+                <b>Hurt Dir:</b> <b>${fmtF(metaHurtDir.x)}</b>, <b>${fmtF(metaHurtDir.y)}</b>, <b>${fmtF(metaHurtDir.z)}</b>
+            `;
         });
 
         this.updateInfoPanelPositions();
