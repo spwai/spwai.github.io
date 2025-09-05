@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>spwai.github.io</title>
+    <link rel="stylesheet" href="https://unpkg.com/@primer/css@^20.8.3/dist/primer.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <script>
+        const { createElement: h, Fragment, useState, useEffect } = React;
+        
+        function App() {
+            const [profileData, setProfileData] = useState({
+                avatar: 'https://avatars.githubusercontent.com/u/92832744?v=4',
+                name: 'spwai',
+                username: 'spwai',
+                followers: 0,
+                following: 0
+            });
+            const [isLoading, setIsLoading] = useState(true);
+            
+            useEffect(() => {
+                // Fetch GitHub profile data with proper headers
+                fetch('https://api.github.com/users/spwai', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/vnd.github+json',
+                        'X-GitHub-Api-Version': '2022-11-28'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('GitHub API response:', data);
+                    setProfileData({
+                        avatar: data.avatar_url,
+                        name: data.name || data.login,
+                        username: data.login,
+                        followers: data.followers,
+                        following: data.following
+                    });
+                    setIsLoading(false);
+                })
+                .catch(error => {
+                    console.error('GitHub API error:', error);
+                    setIsLoading(false);
+                    // Keep fallback data
+                });
+            }, []);
+            return h('div', {
+                style: {
+                    minHeight: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'var(--bgColor-default, #ffffff)',
+                    color: 'var(--fgColor-default, #1f2328)',
+                    padding: '2vw',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif',
+                    userSelect: 'none',
+                    WebkitUserSelect: 'none',
+                    MozUserSelect: 'none',
+                    msUserSelect: 'none'
+                }
+            }, 
+                h('div', {
+                    style: {
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 'clamp(1rem, 4vw, 3rem)',
+                        maxWidth: 'min(90vw, 800px)',
+                        width: '100%',
+                        flexWrap: 'wrap'
+                    }
+                },
+                    // Profile Avatar
+                    h('img', {
+                        src: profileData.avatar,
+                        alt: `${profileData.username} avatar`,
+                        draggable: false,
+                        style: {
+                            width: 'clamp(200px, 20vw, 260px)',
+                            height: 'clamp(200px, 20vw, 260px)',
+                            borderRadius: '50%',
+                            border: '1px solid var(--borderColor-default, #d1d9e0)',
+                            userSelect: 'none',
+                            pointerEvents: 'none',
+                            flexShrink: 0
+                        }
+                    }),
+                    
+                    // Profile Info
+                    h('div', {
+                        style: {
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 'clamp(0.5rem, 2vw, 1rem)',
+                            minWidth: '200px',
+                            flex: '1 1 auto'
+                        }
+                    },
+                        // Name and Username
+                        h('div', {
+                            style: {
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 'clamp(0.125rem, 0.5vw, 0.25rem)'
+                            }
+                        },
+                            h('h1', {
+                                style: {
+                                    fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+                                    fontWeight: 'bold',
+                                    color: 'var(--fgColor-default, #1f2328)',
+                                    margin: 0
+                                }
+                            }, profileData.name),
+                            h('p', {
+                                style: {
+                                    fontSize: 'clamp(1rem, 2.5vw, 1.25rem)',
+                                    color: 'var(--fgColor-muted, #59636e)',
+                                    margin: 0
+                                }
+                            }, profileData.username)
+                        ),
+                        
+                        // Followers/Following
+                        h('div', {
+                            style: {
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 'clamp(0.5rem, 2vw, 1rem)',
+                                marginTop: 'clamp(0.5rem, 2vw, 1rem)',
+                                flexWrap: 'wrap'
+                            }
+                        },
+                            h('a', {
+                                href: 'https://github.com/spwai?tab=followers',
+                                style: {
+                                    color: 'var(--fgColor-muted, #59636e)',
+                                    textDecoration: 'none',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }
+                            },
+                                h('svg', {
+                                    width: 16,
+                                    height: 16,
+                                    viewBox: '0 0 16 16',
+                                    fill: 'currentColor'
+                                }, h('path', {
+                                    d: 'M2 5.5a3.5 3.5 0 1 1 5.898 2.549 5.508 5.508 0 0 1 3.034 4.084.75.75 0 1 1-1.482.235 4 4 0 0 0-7.9 0 .75.75 0 0 1-1.482-.236A5.507 5.507 0 0 1 3.102 8.05 3.493 3.493 0 0 1 2 5.5ZM11 4a3.001 3.001 0 0 1 2.22 5.018 5.01 5.01 0 0 1 2.56 3.012.749.749 0 0 1-.885.954.752.752 0 0 1-.549-.514 3.507 3.507 0 0 0-2.522-2.372.75.75 0 0 1-.574-.73v-.352a.75.75 0 0 1 .416-.672A1.5 1.5 0 0 0 11 5.5.75.75 0 0 1 11 4Zm-5.5-.5a2 2 0 1 0-.001 3.999A2 2 0 0 0 5.5 3.5Z'
+                                })),
+                                isLoading ? h('div', {
+                                    className: 'skeleton',
+                                    style: {
+                                        width: '20px',
+                                        height: '16px',
+                                        display: 'inline-block'
+                                    }
+                                }) : h('span', {
+                                    style: {
+                                        fontWeight: 'bold',
+                                        color: 'var(--fgColor-default, #1f2328)'
+                                    }
+                                }, profileData.followers),
+                                h('span', {
+                                    style: {
+                                        color: 'var(--fgColor-muted, #59636e)'
+                                    }
+                                }, 'followers')
+                            ),
+                            h('span', {
+                                style: {
+                                    color: 'var(--fgColor-muted, #59636e)'
+                                }
+                            }, '·'),
+                            h('a', {
+                                href: 'https://github.com/spwai?tab=following',
+                                style: {
+                                    color: 'var(--fgColor-muted, #59636e)',
+                                    textDecoration: 'none',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }
+                            },
+                                isLoading ? h('div', {
+                                    className: 'skeleton',
+                                    style: {
+                                        width: '20px',
+                                        height: '16px',
+                                        display: 'inline-block'
+                                    }
+                                }) : h('span', {
+                                    style: {
+                                        fontWeight: 'bold',
+                                        color: 'var(--fgColor-default, #1f2328)'
+                                    }
+                                }, profileData.following),
+                                h('span', {
+                                    style: {
+                                        color: 'var(--fgColor-muted, #59636e)'
+                                    }
+                                }, 'following')
+                            )
+                        )
+                    )
+                )
+            );
+        }
+        
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(h(App));
+    </script>
+</body>
+</html>
