@@ -46,12 +46,41 @@ def add_username(data: Dict[str, List[str]], category: str, username: str) -> bo
         return False
     
     if cleaned_username in data[category]:
+        print(f"'{cleaned_username}' is already in the '{category}' list")
         return False
     
-    data[category] = insert_sorted(data[category], cleaned_username)
+    other_category = "qt" if category == "msr" else "msr"
+    if cleaned_username in data[other_category]:
+        data[other_category].remove(cleaned_username)
+        print(f"Moved '{cleaned_username}' from '{other_category}' to '{category}' list")
+    else:
+        print(f"Added '{cleaned_username}' to '{category}' list")
     
-    print(f"added '{cleaned_username}' to '{category}' list")
+    data[category] = insert_sorted(data[category], cleaned_username)
     return True
+
+def remove_username(data: Dict[str, List[str]], username: str) -> bool:
+    cleaned_username = clean_username(username)
+    
+    if not cleaned_username:
+        return False
+    
+    removed_from = []
+    
+    for category in ["msr", "qt"]:
+        if cleaned_username in data[category]:
+            data[category].remove(cleaned_username)
+            removed_from.append(category)
+    
+    if removed_from:
+        if len(removed_from) == 1:
+            print(f"Removed '{cleaned_username}' from '{removed_from[0]}' list")
+        else:
+            print(f"Removed '{cleaned_username}' from both lists")
+        return True
+    else:
+        print(f"'{cleaned_username}' not found in any list")
+        return False
 
 def get_latest_version():
     try:
@@ -141,6 +170,14 @@ def main():
                 
                 username = ' '.join(parts[1:])
                 if add_username(data, cmd, username):
+                    save_igns(data)
+            elif cmd == 'remove':
+                if len(parts) < 2:
+                    print("Usage: remove <username>")
+                    continue
+                
+                username = ' '.join(parts[1:])
+                if remove_username(data, username):
                     save_igns(data)
             elif cmd == 'push':
                 push_version()
