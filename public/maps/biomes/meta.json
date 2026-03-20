@@ -1,0 +1,13 @@
+{
+  "id": "biomes",
+  "name": "Biomes",
+  "source": "cubecraft",
+  "bounds": {
+    "minX": 12888,
+    "maxX": 13114,
+    "minY": 0,
+    "maxY": 256,
+    "minZ": -115,
+    "maxZ": 144
+  }
+}

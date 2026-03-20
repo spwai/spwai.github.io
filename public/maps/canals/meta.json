@@ -1,0 +1,13 @@
+{
+  "id": "canals",
+  "name": "Canals",
+  "source": "cubecraft",
+  "bounds": {
+    "minX": 8864,
+    "maxX": 9132,
+    "minY": 0,
+    "maxY": 256,
+    "minZ": -108,
+    "maxZ": 154
+  }
+}

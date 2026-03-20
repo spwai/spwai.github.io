@@ -1,0 +1,13 @@
+{
+  "id": "kingdom",
+  "name": "Kingdom",
+  "source": "cubecraft",
+  "bounds": {
+    "minX": 3862,
+    "maxX": 4140,
+    "minY": 0,
+    "maxY": 256,
+    "minZ": -129,
+    "maxZ": 157
+  }
+}
