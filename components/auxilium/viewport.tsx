@@ -126,40 +126,129 @@ function MapGrid({ isDark }: { isDark: boolean }) {
   )
 }
 
-function MapModel({ mapId, isDark, onBoundsCalculated }: { mapId: string; isDark: boolean; onBoundsCalculated?: (center: THREE.Vector3, size: THREE.Vector3) => void }) {
+interface MapLayers {
+  terrain: THREE.Group
+  barriers: THREE.Group
+}
+
+function isBarrierNodeName(name: string) {
+  return name.trim().toLowerCase() === "barriers"
+}
+
+function hasBarrierAncestor(node: THREE.Object3D) {
+  let current = node.parent
+
+  while (current) {
+    if (isBarrierNodeName(current.name)) {
+      return true
+    }
+    current = current.parent
+  }
+
+  return false
+}
+
+function applyMaterialToLayer(root: THREE.Object3D, material: THREE.MeshStandardMaterial) {
+  root.traverse((child) => {
+    if (child instanceof THREE.Mesh) {
+      child.material = material.clone()
+      child.castShadow = true
+      child.receiveShadow = true
+    }
+  })
+}
+
+function splitMapLayers(obj: THREE.Group, terrainColor: string): MapLayers {
+  const terrain = obj.clone(true)
+  const barriers = new THREE.Group()
+  barriers.name = "barriers"
+
+  terrain.updateMatrixWorld(true)
+
+  const barrierNodes: THREE.Object3D[] = []
+  terrain.traverse((child) => {
+    if (isBarrierNodeName(child.name) && !hasBarrierAncestor(child)) {
+      barrierNodes.push(child)
+    }
+  })
+
+  for (const barrierNode of barrierNodes) {
+    const extractedBarrier = barrierNode.clone(true)
+    const worldPosition = new THREE.Vector3()
+    const worldQuaternion = new THREE.Quaternion()
+    const worldScale = new THREE.Vector3()
+
+    barrierNode.matrixWorld.decompose(worldPosition, worldQuaternion, worldScale)
+    extractedBarrier.position.copy(worldPosition)
+    extractedBarrier.quaternion.copy(worldQuaternion)
+    extractedBarrier.scale.copy(worldScale)
+    barriers.add(extractedBarrier)
+
+    barrierNode.parent?.remove(barrierNode)
+  }
+
+  applyMaterialToLayer(
+    terrain,
+    new THREE.MeshStandardMaterial({
+      color: terrainColor,
+      roughness: 0.8,
+      metalness: 0.1,
+      side: THREE.DoubleSide,
+    }),
+  )
+
+  applyMaterialToLayer(
+    barriers,
+    new THREE.MeshStandardMaterial({
+      color: "#38bdf8",
+      roughness: 0.4,
+      metalness: 0,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.2,
+      depthWrite: false,
+    }),
+  )
+
+  return { terrain, barriers }
+}
+
+function MapModel({
+  mapId,
+  isDark,
+  showBarriers = false,
+  onBoundsCalculated,
+}: {
+  mapId: string
+  isDark: boolean
+  showBarriers?: boolean
+  onBoundsCalculated?: (center: THREE.Vector3, size: THREE.Vector3) => void
+}) {
   const objPath = `/maps/${mapId}/${mapId}.obj`
   const obj = useLoader(OBJLoader, objPath)
   
   const modelColor = isDark ? "#1a1a1a" : "#e5e5e5"
   
-  const clonedObj = useMemo(() => {
-    const clone = obj.clone()
-    clone.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
-        child.material = new THREE.MeshStandardMaterial({
-          color: modelColor,
-          roughness: 0.8,
-          metalness: 0.1,
-          side: THREE.DoubleSide,
-        })
-        child.castShadow = true
-        child.receiveShadow = true
-      }
-    })
-    return clone
+  const layers = useMemo(() => {
+    return splitMapLayers(obj, modelColor)
   }, [obj, modelColor])
 
   // Calculate bounds and notify parent
   useEffect(() => {
-    if (clonedObj && onBoundsCalculated) {
-      const box = new THREE.Box3().setFromObject(clonedObj)
+    if (layers.terrain && onBoundsCalculated) {
+      const box = new THREE.Box3().setFromObject(layers.terrain)
       const center = box.getCenter(new THREE.Vector3())
       const size = box.getSize(new THREE.Vector3())
       onBoundsCalculated(center, size)
     }
-  }, [clonedObj, onBoundsCalculated])
+  }, [layers, onBoundsCalculated])
 
-  return <primitive object={clonedObj} />
+  return (
+    <>
+      <primitive object={layers.terrain} />
+      {showBarriers ? <primitive object={layers.barriers} /> : null}
+    </>
+  )
 }
 
 function LoadingFallback() {
