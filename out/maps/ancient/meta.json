@@ -1,0 +1,13 @@
+{
+  "id": "ancient",
+  "name": "Ancient",
+  "source": "cubecraft",
+  "bounds": {
+    "minX": -177,
+    "maxX": 108,
+    "minY": 0,
+    "maxY": 256,
+    "minZ": -145,
+    "maxZ": 99
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "id": "tropical",
+  "name": "Tropical",
+  "source": "cubecraft",
+  "bounds": {
+    "minX": 6889,
+    "maxX": 7120,
+    "minY": 0,
+    "maxY": 256,
+    "minZ": -90,
+    "maxZ": 141
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "id": "overworld",
+  "name": "Overworld",
+  "source": "cubecraft",
+  "bounds": {
+    "minX": 19807,
+    "maxX": 20176,
+    "minY": 0,
+    "maxY": 256,
+    "minZ": -177,
+    "maxZ": 208
+  }
+}

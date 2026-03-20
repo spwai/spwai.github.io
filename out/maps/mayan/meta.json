@@ -1,0 +1,13 @@
+{
+  "id": "mayan",
+  "name": "Mayan",
+  "source": "cubecraft",
+  "bounds": {
+    "minX": 9886,
+    "maxX": 10172,
+    "minY": 0,
+    "maxY": 256,
+    "minZ": -123,
+    "maxZ": 173
+  }
+}

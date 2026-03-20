@@ -1,0 +1,13 @@
+{
+  "id": "savannah",
+  "name": "Savannah",
+  "source": "cubecraft",
+  "bounds": {
+    "minX": 853,
+    "maxX": 1107,
+    "minY": 0,
+    "maxY": 256,
+    "minZ": -101,
+    "maxZ": 111
+  }
+}
