@@ -1,17 +1,8 @@
 "use client"
 
-import { X, User, Target, Package } from "lucide-react"
+import { X, User, Shield, Crosshair } from "lucide-react"
 import { Button } from "@/components/ui/button"
-
-interface Entity {
-  id: string
-  name: string
-  type: "player" | "item" | "objective"
-  position: [number, number, number]
-  health?: number
-  team?: string
-  description?: string
-}
+import type { Entity } from "@/lib/auxcloud"
 
 interface DetailsPanelProps {
   entity: Entity | null
@@ -35,17 +26,19 @@ export function DetailsPanel({ entity, onClose }: DetailsPanelProps) {
     )
   }
 
-  const TypeIcon = entity.type === "player" 
-    ? User 
-    : entity.type === "objective" 
-    ? Target 
-    : Package
+  const TypeIcon =
+    entity.category === "target"
+      ? Crosshair
+      : entity.category === "ally"
+        ? Shield
+        : User
 
-  const typeColor = entity.type === "player"
-    ? (entity.team === "CT" ? "text-blue-500" : "text-red-500")
-    : entity.type === "objective"
-    ? "text-yellow-500"
-    : "text-green-500"
+  const typeColor =
+    entity.category === "target"
+      ? "text-red-500"
+      : entity.category === "ally"
+        ? "text-green-500"
+        : "text-zinc-400"
 
   return (
     <div className="absolute top-3 right-3 w-56 bg-card border border-border rounded-md shadow-sm">
@@ -67,30 +60,21 @@ export function DetailsPanel({ entity, onClose }: DetailsPanelProps) {
       </div>
       <div className="px-3 py-2 space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] text-muted-foreground">Type</span>
-          <span className="text-[10px] text-foreground capitalize">{entity.type}</span>
+          <span className="text-[10px] text-muted-foreground">Category</span>
+          <span className="text-[10px] text-foreground capitalize">{entity.category}</span>
         </div>
-        
-        {entity.team && (
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] text-muted-foreground">Team</span>
-            <span className={`text-[10px] ${entity.team === "CT" ? "text-blue-500" : "text-red-500"}`}>
-              {entity.team}
-            </span>
-          </div>
-        )}
-        
-        {entity.health !== undefined && (
+
+        {entity.health !== null && (
           <div className="flex items-center justify-between">
             <span className="text-[10px] text-muted-foreground">Health</span>
             <div className="flex items-center gap-1.5">
               <div className="w-12 h-1 bg-secondary rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-green-500 rounded-full"
-                  style={{ width: `${entity.health}%` }}
+                  style={{ width: `${Math.max(0, Math.min(entity.health, 20)) * 5}%` }}
                 />
               </div>
-              <span className="text-[10px] text-foreground">{entity.health}</span>
+              <span className="text-[10px] text-foreground">{entity.health.toFixed(1)}</span>
             </div>
           </div>
         )}
@@ -98,17 +82,9 @@ export function DetailsPanel({ entity, onClose }: DetailsPanelProps) {
         <div className="flex items-center justify-between">
           <span className="text-[10px] text-muted-foreground">Position</span>
           <span className="text-[10px] text-foreground font-mono">
-            {entity.position.map(p => p.toFixed(1)).join(", ")}
+            {entity.worldPosition.map((p) => p.toFixed(1)).join(", ")}
           </span>
         </div>
-
-        {entity.description && (
-          <div className="pt-1 border-t border-border">
-            <p className="text-[10px] text-muted-foreground leading-relaxed">
-              {entity.description}
-            </p>
-          </div>
-        )}
       </div>
     </div>
   )

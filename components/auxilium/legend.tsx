@@ -5,10 +5,9 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 
 const legendItems = [
-  { color: "bg-blue-500", label: "CT Player" },
-  { color: "bg-red-500", label: "T Player" },
-  { color: "bg-yellow-500", label: "Objective" },
-  { color: "bg-green-500", label: "Item" },
+  { color: "bg-red-500", label: "Targets" },
+  { color: "bg-green-500", label: "Allies" },
+  { color: "bg-zinc-400", label: "Default" },
 ]
 
 export function Legend() {

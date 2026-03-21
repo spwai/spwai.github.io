@@ -2,50 +2,19 @@
 
 import { useRef, useState, useEffect, Suspense, useMemo, useCallback } from "react"
 import { Canvas, useFrame, useThree, useLoader } from "@react-three/fiber"
-import { OrbitControls, PerspectiveCamera, Html, Center } from "@react-three/drei"
+import { OrbitControls, PerspectiveCamera, Html } from "@react-three/drei"
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js"
 import { useTheme } from "next-themes"
 import * as THREE from "three"
-
-interface Entity {
-  id: string
-  name: string
-  type: "player" | "item" | "objective"
-  position: [number, number, number]
-  health?: number
-  team?: string
-  description?: string
-}
-
-interface MapMeta {
-  id: string
-  name: string
-  source: string
-  bounds: {
-    minX: number
-    maxX: number
-    minY: number
-    maxY: number
-    minZ: number
-    maxZ: number
-  }
-}
+import type { Entity } from "@/lib/auxcloud"
 
 interface ViewportProps {
   selectedMap: string
+  entities: Entity[]
   selectedEntity: Entity | null
   onSelectEntity: (entity: Entity | null) => void
   cameraResetTrigger: number
 }
-
-// Mock entities for demonstration
-const mockEntities: Entity[] = [
-  { id: "1", name: "Player_Alpha", type: "player", position: [2, 0.5, 1], health: 100, team: "CT", description: "Counter-Terrorist operative" },
-  { id: "2", name: "Player_Bravo", type: "player", position: [-1.5, 0.5, 2], health: 75, team: "T", description: "Terrorist operative" },
-  { id: "3", name: "Bomb_Site_A", type: "objective", position: [3, 0.3, -2], description: "Primary bomb plant location" },
-  { id: "4", name: "AWP_Pickup", type: "item", position: [-2, 0.3, -1], description: "Sniper rifle spawn point" },
-  { id: "5", name: "Player_Charlie", type: "player", position: [0, 0.5, -3], health: 50, team: "CT", description: "Counter-Terrorist support" },
-]
 
 function EntityMarker({ 
   entity, 
@@ -57,24 +26,36 @@ function EntityMarker({
   onClick: () => void 
 }) {
   const meshRef = useRef<THREE.Mesh>(null)
+  const targetRef = useRef(new THREE.Vector3(...entity.scenePosition))
   const [hovered, setHovered] = useState(false)
+  const phase = useMemo(() => Math.random() * Math.PI * 2, [])
 
-  const color = entity.type === "player" 
-    ? (entity.team === "CT" ? "#3b82f6" : "#ef4444")
-    : entity.type === "objective" 
-    ? "#eab308" 
-    : "#22c55e"
+  const color =
+    entity.category === "target"
+      ? "#ef4444"
+      : entity.category === "ally"
+        ? "#22c55e"
+        : "#9ca3af"
 
-  useFrame((state) => {
+  useEffect(() => {
+    targetRef.current.set(...entity.scenePosition)
+  }, [entity.scenePosition])
+
+  useFrame((state, delta) => {
     if (meshRef.current) {
-      meshRef.current.position.y = entity.position[1] + Math.sin(state.clock.elapsedTime * 2) * 0.05
+      const bob = Math.sin(state.clock.elapsedTime * 2 + phase) * 0.05
+      const alpha = 1 - Math.exp(-delta * 8)
+      meshRef.current.position.lerp(
+        new THREE.Vector3(targetRef.current.x, targetRef.current.y + bob, targetRef.current.z),
+        alpha,
+      )
     }
   })
 
   return (
     <mesh
       ref={meshRef}
-      position={entity.position}
+      position={entity.scenePosition}
       onClick={(e) => {
         e.stopPropagation()
         onClick()
@@ -335,6 +316,7 @@ function CameraController({
 
 function Scene({ 
   selectedMap,
+  entities,
   selectedEntity, 
   onSelectEntity,
   cameraResetTrigger,
@@ -375,7 +357,7 @@ function Scene({
         />
       </Suspense>
       
-      {mockEntities.map((entity) => (
+      {entities.map((entity) => (
         <EntityMarker
           key={entity.id}
           entity={entity}
@@ -389,7 +371,7 @@ function Scene({
   )
 }
 
-export function Viewport({ selectedMap, selectedEntity, onSelectEntity, cameraResetTrigger }: ViewportProps) {
+export function Viewport({ selectedMap, entities, selectedEntity, onSelectEntity, cameraResetTrigger }: ViewportProps) {
   const { resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   
@@ -411,6 +393,7 @@ export function Viewport({ selectedMap, selectedEntity, onSelectEntity, cameraRe
         <Suspense fallback={null}>
           <Scene 
             selectedMap={selectedMap}
+            entities={entities}
             selectedEntity={selectedEntity}
             onSelectEntity={onSelectEntity}
             cameraResetTrigger={cameraResetTrigger}

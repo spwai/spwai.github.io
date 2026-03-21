@@ -1,35 +1,35 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect, useMemo } from "react"
 import dynamic from "next/dynamic"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Header } from "@/components/auxilium/header"
 import { DetailsPanel } from "@/components/auxilium/details-panel"
 import { Legend } from "@/components/auxilium/legend"
+import {
+  type Entity,
+  type MapMeta,
+  AUXCLOUD_POLL_INTERVAL_MS,
+  fetchMapMeta,
+  fetchMapSnapshot,
+  toSceneEntities,
+} from "@/lib/auxcloud"
 
 const Viewport = dynamic(
   () => import("@/components/auxilium/viewport").then(mod => ({ default: mod.Viewport })),
   { ssr: false }
 )
 
-interface Entity {
-  id: string
-  name: string
-  type: "player" | "item" | "objective"
-  position: [number, number, number]
-  health?: number
-  team?: string
-  description?: string
-}
-
 export default function AuxiliumPage() {
   const [selectedMap, setSelectedMap] = useState("ancient")
-  const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null)
+  const [selectedEntityID, setSelectedEntityID] = useState<string | null>(null)
   const [cameraResetTrigger, setCameraResetTrigger] = useState(0)
+  const [mapMeta, setMapMeta] = useState<MapMeta | null>(null)
+  const [entities, setEntities] = useState<Entity[]>([])
 
   const handleMapChange = useCallback((map: string) => {
     setSelectedMap(map)
-    setSelectedEntity(null)
+    setSelectedEntityID(null)
   }, [])
 
   const handleResetCamera = useCallback(() => {
@@ -37,12 +37,66 @@ export default function AuxiliumPage() {
   }, [])
 
   const handleSelectEntity = useCallback((entity: Entity | null) => {
-    setSelectedEntity(entity)
+    setSelectedEntityID(entity?.id ?? null)
   }, [])
 
   const handleCloseDetails = useCallback(() => {
-    setSelectedEntity(null)
+    setSelectedEntityID(null)
   }, [])
+
+  useEffect(() => {
+    let active = true
+    setMapMeta(null)
+
+    fetchMapMeta(selectedMap)
+      .then((meta) => {
+        if (active) {
+          setMapMeta(meta)
+        }
+      })
+      .catch((err) => {
+        console.error("[auxcloud] failed to load map metadata", err)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [selectedMap])
+
+  useEffect(() => {
+    if (!mapMeta) {
+      setEntities([])
+      return
+    }
+
+    let cancelled = false
+
+    const poll = async () => {
+      try {
+        const snapshot = await fetchMapSnapshot(selectedMap)
+        if (!cancelled) {
+          setEntities(toSceneEntities(snapshot, mapMeta))
+        }
+      } catch (err) {
+        console.error("[auxcloud] failed to fetch live entities", err)
+      }
+    }
+
+    void poll()
+    const interval = window.setInterval(() => {
+      void poll()
+    }, AUXCLOUD_POLL_INTERVAL_MS)
+
+    return () => {
+      cancelled = true
+      window.clearInterval(interval)
+    }
+  }, [mapMeta, selectedMap])
+
+  const selectedEntity = useMemo(
+    () => entities.find((entity) => entity.id === selectedEntityID) ?? null,
+    [entities, selectedEntityID],
+  )
 
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
@@ -55,6 +109,7 @@ export default function AuxiliumPage() {
         <main className="flex-1 relative overflow-hidden">
           <Viewport 
             selectedMap={selectedMap}
+            entities={entities}
             selectedEntity={selectedEntity}
             onSelectEntity={handleSelectEntity}
             cameraResetTrigger={cameraResetTrigger}
